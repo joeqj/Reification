@@ -29,7 +29,8 @@
 
 		<script src="assets/js/shaders/CopyShader.js"></script>
 		<script src="assets/js/shaders/DigitalGlitch.js"></script>
-		<script src="assets/js/controls/TrackballControls.js"></script>
+		<script src="assets/js/controls/OrbitControls.js"></script>
+
 		<script src="assets/js/shaders/DotScreenShader.js"></script>
 		<script src="assets/js/shaders/RGBShiftShader.js"></script>
 
@@ -54,9 +55,11 @@
 				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
 				camera.position.z = 500;
 
-				controls = new THREE.TrackballControls( camera, renderer.domElement );
-				controls.minDistance = 500;
-				controls.maxDistance = 1500;
+				controls = new THREE.OrbitControls( camera );
+				controls.target.set( 0, 0, 0 );
+				controls.enableZoom = false;
+				controls.enablePan = false;
+				controls.update();
 
 				scene = new THREE.Scene();
 				
@@ -89,7 +92,6 @@
 
 				composer2 = new THREE.EffectComposer( renderer );
 				composer2.addPass( new THREE.RenderPass( scene, camera ) );
-
 
 				var effect = new THREE.ShaderPass( THREE.RGBShiftShader );
 				effect.uniforms[ 'amount' ].value = 0.0025;
@@ -133,7 +135,7 @@
 
 				controls.update();
 				composer.render(); //Glitch Render
-				//composer2.render(); //RGB Render
+				composer2.render(); //RGB Render
 				//renderer.render(scene, camera); //Normal render
 			}
 		</script>
