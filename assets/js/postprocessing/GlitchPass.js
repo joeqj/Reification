@@ -88,8 +88,12 @@ THREE.GlitchPass.prototype = Object.assign( Object.create( THREE.Pass.prototype 
 
 	generateTrigger: function() {
 
-		this.randX = THREE.Math.randInt( 120, 240 );
+		this.randX = 0;
 
+	},
+
+	generateGlitchTrigger: function() {
+		this.randX = 240000;
 	},
 
 	generateHeightmap: function( dt_size ) {
