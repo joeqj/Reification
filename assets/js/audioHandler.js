@@ -46,7 +46,7 @@ function loadAudioBuffer(url) {
 
 function finishLoad() {
 	source.buffer = audioBuffer;
-	source.loop = true;
+	source.loop = false;
 	source.start(0.0);
 	startViz();
 }
@@ -90,4 +90,6 @@ function startViz(){
 	freqByteData = new Uint8Array(analyser.frequencyBinCount);
 	levels = [];
 	isPlayingAudio = true;
+	
+	clock.start();
 }

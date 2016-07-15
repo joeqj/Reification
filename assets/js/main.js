@@ -7,7 +7,6 @@ var totalFaces = 0;
 var lineSphere;
 var particles;
 var clearArray = [];
-var clock;
 var object, light;
 var beatCutOff = 20;
 var beatTime = 0; //avoid auto beat at start
@@ -15,6 +14,9 @@ var geometry;
 var lineSphere;
 var renderScene;
 var glitchPass;
+
+var clock = new THREE.Clock(false);
+var autoMode = false;
 
 var width = window.innerWidth;
 var height = window.innerHeight;
@@ -30,8 +32,15 @@ init();
 animate();
 loadReification();
 function init() {
-	clock = new THREE.Clock();
-	clock.start();
+	//Get an Audio Context
+	try {
+		window.AudioContext = window.AudioContext || window.webkitAudioContext;
+		audioContext = new window.AudioContext();
+	} catch(e) {
+		//Web Audio API is not supported in this browser
+		alert("Sorry! This browser does not support the Web Audio API. Please use Chrome, Safari or Firefox.");
+	}
+
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio( window.devicePixelRatio );
@@ -95,16 +104,8 @@ function init() {
 
 	postProcessing();
 
-	//Get an Audio Context
-	try {
-		window.AudioContext = window.AudioContext || window.webkitAudioContext;
-		audioContext = new window.AudioContext();
-	} catch(e) {
-		//Web Audio API is not supported in this browser
-		alert("Sorry! This browser does not support the Web Audio API. Please use Chrome, Safari or Firefox.");
-	}
-
 	window.addEventListener( 'resize', onWindowResize, false );
+	window.addEventListener("dblclick", startAuto, false);
 }
 
 function onWindowResize() {
@@ -112,7 +113,15 @@ function onWindowResize() {
 	camera.updateProjectionMatrix();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	composer.setSize( window.innerWidth, window.innerHeight );
-	composer2.setSize( window.innerWidth, window.innerHeight );
+	//composer2.setSize( window.innerWidth, window.innerHeight );
+}
+
+function startAuto() {
+	if (autoMode == true) {
+		autoMode = false;
+	} else {
+		autoMode = true;
+	};
 }
 
 function animate() {
@@ -165,8 +174,7 @@ function createLineCube() {
 
 function createLineSpheres() {
 	var i, vertex1, vertex2, material, p,
-		parameters = [  [ 0.5, 0x87daff, 1, 1 ],  [ 1.2, 0x8e87ff, 0.5, 1 ], [ 1.25, 0x000833, 0.8, 1 ],
-				       [ 3.0, 0xaaaaaa, 0.75, 2 ], [ 3.5, 0xffffff, 0.5, 1 ], [ 4.5, 0xffffff, 0.25, 1 ], [ 5.5, 0xffffff, 0.125, 1 ] ];
+		parameters = [ [ 1.2, 0x8e87ff, 0.5, 1 ], [ 1.25, 0x000833, 0.8, 1 ], [ 3.0, 0xaaaaaa, 0.75, 2 ], [ 3.5, 0xffffff, 0.5, 1 ], [ 4.5, 0xffffff, 0.25, 1 ], [ 5.5, 0xffffff, 0.125, 1 ] ];
 	var geometry = createGeometry();
 	for( i = 0; i < parameters.length; ++ i ) {
 		p = parameters[ i ];
@@ -178,6 +186,19 @@ function createLineSpheres() {
 		lineSphere.updateMatrix();
 		scene.add( lineSphere );
 	}
+};
+
+function createLineSphereInner() {
+	var i, vertex1, vertex2, material, p;
+	var geometry = createGeometry();
+
+	material = new THREE.LineBasicMaterial( { color: 0x87daff, opacity: 1, linewidth: 1 } );
+	lineSphere = new THREE.LineSegments( geometry, material );
+	lineSphere.scale.x = lineSphere.scale.y = lineSphere.scale.z = 0.5;
+	lineSphere.originalScale = 1;
+	lineSphere.rotation.y = Math.random() * Math.PI;
+	lineSphere.updateMatrix();
+	sceneSphere.add( lineSphere );
 };
 
 function createGeometry() {
@@ -303,41 +324,53 @@ function render() {
 		} else {
 			materials[i].color.setHex( 0xffffff );
 		}
-	}
-	
+	}	
 
 	controls.update();
 
 	renderer.clear();
-	composer.render(); // Glitch Render
-	
+	composer.render(); // Orbs, Lines - RGB Shift + Glitch
 	renderer.clearDepth();
-	renderer.render( scene2, camera );
-	//renderer.render( scene, camera );
+	renderer.render( sceneSphere, camera ); // Inner Sphere
+	renderer.clearDepth();
+	renderer.render( scene2, camera ); // Stars
 	renderer.clearDepth();
 
 	document.getElementById('clock').innerHTML = clock.getElapsedTime();
 
-	var firstGlitch = 60;
+	var firstGlitch = 58.5;
 
 	if( clock.getElapsedTime() > firstGlitch && clock.getElapsedTime() < firstGlitch + 1 ||
 		clock.getElapsedTime() > firstGlitch + 4.5 && clock.getElapsedTime() < firstGlitch + 5.5 ||
 		clock.getElapsedTime() > firstGlitch + 18 && clock.getElapsedTime() < firstGlitch + 18.7 ||
-		clock.getElapsedTime() > firstGlitch + 34.5 && clock.getElapsedTime() < firstGlitch + 37.25) {
+		clock.getElapsedTime() > firstGlitch + 34.8 && clock.getElapsedTime() < firstGlitch + 37.25) {
 		glitchPass.generateGlitchTrigger();
 	} else {
 		glitchPass.generateTrigger();
 	}
 	
-	//renderer.render(scene, camera); // Normal render
 	if( clock.getElapsedTime() > 3 && clock.getElapsedTime() < 3.06 ) {
 		setInterval(createLineCube(),50);
 	}
-	if( clock.getElapsedTime() > 49.2 ) {
-		moveCamera();
 
+	if(autoMode == true) {
+		moveCamera();
 	}
-	if( clock.getElapsedTime() > 139.2 && clock.getElapsedTime() < 139.29 ) {
+
+	// if( clock.getElapsedTime() > 0 && clock.getElapsedTime() < 0.09 ) {
+	// 	createLineSpheres();
+	// 	createLineSphereInner();
+	// }
+
+	if( clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 143.99 ) {
 		createLineSpheres();
+		createLineSphereInner();
 	}
+
+	if( clock.getElapsedTime() > 167.9) {
+		for( var i = sceneSphere.children.length - 1; i >= 0; i--) { 
+			var particle = sceneSphere.children[i];
+			particle.scale.x = lineSphere.scale.y = lineSphere.scale.z = 0.5 + normLevel / 5;
+		}
+	}	
 }
