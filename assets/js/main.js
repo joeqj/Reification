@@ -2,7 +2,7 @@ var BEAT_HOLD_TIME = 60; //num of frames to hold a beat
 var BEAT_DECAY_RATE = 0.97;
 var BEAT_MIN = 0.6; //level less than this is no beat
 
-var camera, scene, renderer, composer, materials = [], simpleMeshCount = 2000;
+var camera, scene, renderer, composer, materials = [], particleArray = [], simpleMeshCount = 2000;
 var totalFaces = 0;
 var lineSphere;
 var particles;
@@ -31,6 +31,7 @@ var rtParameters = {
 init();
 animate();
 loadReification();
+
 function init() {
 	//Get an Audio Context
 	try {
@@ -92,6 +93,15 @@ function init() {
 		[ [0.85, 1, 0.5], 2 ],
 		[ [0.80, 1, 0.5], 1 ]
 	];
+	drawParticles(parameters);
+
+	postProcessing();
+
+	window.addEventListener( 'resize', onWindowResize, false );
+	window.addEventListener( 'dblclick', startAuto, false );
+}
+
+function drawParticles(parameters) {
 	for ( i = 0; i < parameters.length; i ++ ) {
 		size  = parameters[i][1];
 		materials[i] = new THREE.PointsMaterial( { size: size } );
@@ -101,11 +111,6 @@ function init() {
 		particles.rotation.z = Math.random() * 6;
 		scene2.add( particles );
 	}
-
-	postProcessing();
-
-	window.addEventListener( 'resize', onWindowResize, false );
-	window.addEventListener("dblclick", startAuto, false);
 }
 
 function onWindowResize() {
@@ -144,7 +149,7 @@ function createJSON(json, name, colour, posx, posy, posz) {
 	}); 
 };
 
-function createLineCube() {
+function createLineCube(index) {
 	colourfuck = 2.5;
 	increment = 0.5
 	var geometry = new THREE.Geometry(),
@@ -163,11 +168,12 @@ function createLineCube() {
 	var parameters =  [ [ material, scale * 1.5, [0,0,0],  geometry ] ];
 	for (i = 0; i < parameters.length; ++i) {
 		p = parameters[ i ];
-		line = new THREE.Line( p[ 3 ],  p [0]);
+		line = new THREE.Line( p[ 3 ],  p [0] );
 		line.scale.x = line.scale.y = line.scale.z =  p[ 1 ];
 		line.position.x = p[ 2 ][ 2 ];
 		line.position.y = p[ 2 ][ 1 ];
 		line.position.z = p[ 2 ][ 2 ];
+
 		scene.add( line );
 	}
 };
@@ -255,29 +261,9 @@ function loadReification(){
 	loadAudio();
 }
 
-function postProcessing2() {
-	// postprocessing
-	var clearMask = new THREE.ClearMaskPass();
-	composer = new THREE.EffectComposer( renderer );
-	composer.addPass( new THREE.RenderPass( scene, camera ) );
-	var glitchPass = new THREE.GlitchPass();
-	glitchPass.renderToScreen = true;
-	
-	//composer.addPass( glitchPass );
-	//composer.addPass( clearMask );
-
-	var effect = new THREE.ShaderPass( THREE.RGBShiftShader );
-	effect.uniforms[ 'amount' ].value = 0.0015;
-	effect.renderToScreen = true;
-	composer.addPass( effect );
-	composer.addPass( clearMask );
-}
-
 function postProcessing() {
 	composer = new THREE.EffectComposer(renderer);
 	composer.addPass(new THREE.RenderPass(scene, camera));
-
-	
 	
 	kaleidoPass = new THREE.ShaderPass(THREE.KaleidoShader);
 	kaleidoPass.renderToScreen = false;
@@ -291,7 +277,20 @@ function postProcessing() {
 	shaderPass.uniforms[ 'amount' ].value = 0.0015;
 	shaderPass.renderToScreen = true;
 	composer.addPass(shaderPass);
+}
 
+function postProcessing2() {
+	var clearMask = new THREE.ClearMaskPass();
+	composer = new THREE.EffectComposer( renderer );
+	composer.addPass( new THREE.RenderPass( scene, camera ) );
+	var glitchPass = new THREE.GlitchPass();
+	glitchPass.renderToScreen = true;
+
+	var effect = new THREE.ShaderPass( THREE.RGBShiftShader );
+	effect.uniforms[ 'amount' ].value = 0.0015;
+	effect.renderToScreen = true;
+	composer.addPass( effect );
+	composer.addPass( clearMask );
 }
 
 function moveCamera() {
@@ -302,8 +301,6 @@ function moveCamera() {
 };
 
 function render() {
-	var time = Date.now();
-
 	updateAudio();
 
 	orb1.rotation.x += 0.05;
@@ -311,8 +308,6 @@ function render() {
 
 	orb2.rotation.x += 0.01  ;
 	orb2.rotation.y += 0.02;
-
-	//console.log(normLevel);
 
 	// Particles responding to audio
 	for( var i = scene2.children.length - 1; i >= 0; i--) { 
@@ -338,23 +333,25 @@ function render() {
 
 	document.getElementById('clock').innerHTML = clock.getElapsedTime();
 
+	if(autoMode == true) {
+		moveCamera();
+	}
+	
+	if( clock.getElapsedTime() > 3 && clock.getElapsedTime() < 3.02 ) {
+		for(i = 0; i < 3; i++) {
+			createLineCube(i);
+		}
+	}
+
 	var firstGlitch = 58.5;
 
 	if( clock.getElapsedTime() > firstGlitch && clock.getElapsedTime() < firstGlitch + 1 ||
 		clock.getElapsedTime() > firstGlitch + 4.5 && clock.getElapsedTime() < firstGlitch + 5.5 ||
 		clock.getElapsedTime() > firstGlitch + 18 && clock.getElapsedTime() < firstGlitch + 18.7 ||
-		clock.getElapsedTime() > firstGlitch + 34.8 && clock.getElapsedTime() < firstGlitch + 37.25) {
+		clock.getElapsedTime() > firstGlitch + 34.8 && clock.getElapsedTime() < firstGlitch + 37.25 ) {
 		glitchPass.generateGlitchTrigger();
 	} else {
 		glitchPass.generateTrigger();
-	}
-	
-	if( clock.getElapsedTime() > 3 && clock.getElapsedTime() < 3.06 ) {
-		setInterval(createLineCube(),50);
-	}
-
-	if(autoMode == true) {
-		moveCamera();
 	}
 
 	// if( clock.getElapsedTime() > 0 && clock.getElapsedTime() < 0.09 ) {
@@ -367,8 +364,8 @@ function render() {
 		createLineSphereInner();
 	}
 
-	if( clock.getElapsedTime() > 167.9) {
-		for( var i = sceneSphere.children.length - 1; i >= 0; i--) { 
+	if( clock.getElapsedTime() > 167.9 ) {
+		for( var i = sceneSphere.children.length - 1; i >= 0; i-- ) { 
 			var particle = sceneSphere.children[i];
 			particle.scale.x = lineSphere.scale.y = lineSphere.scale.z = 0.5 + normLevel / 5;
 		}
