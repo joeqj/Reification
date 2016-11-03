@@ -1,3 +1,10 @@
+/*
+*
+*	Joe QJ - Reification
+*	For any questions please email heyimjoeqj@gmail.com
+*
+*/
+
 var BEAT_HOLD_TIME = 60; //num of frames to hold a beat
 var BEAT_DECAY_RATE = 0.97;
 var BEAT_MIN = 0.6; //level less than this is no beat
@@ -14,6 +21,7 @@ var geometry;
 var lineSphere;
 var renderScene;
 var glitchPass;
+var axis;
 
 var clock = new THREE.Clock(false);
 var autoMode = true;
@@ -33,15 +41,12 @@ animate();
 loadReification();
 
 function init() {
-	//Get an Audio Context
 	try {
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
 		audioContext = new window.AudioContext();
 	} catch(e) {
-		//Web Audio API is not supported in this browser
-		alert("Yo why are you using an outdated browser bro? Please use Chrome, Safari or Firefox for audio to work.");
+		alert("Why are you using an outdated browser bro? Please use Chrome or Firefox for audio to work.");
 	}
-
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio( window.devicePixelRatio );
@@ -58,16 +63,17 @@ function init() {
 	controls.enablePan = false;
 	controls.update();
 
+	//declared once at the top of your code
+	//var axis = new THREE.Vector3(0.5,0.5,0);//tilted a bit on x and y - feel free to plug your different axis here
+
 	scene = new THREE.Scene();
 	scene2 = new THREE.Scene();
 	sceneSphere = new THREE.Scene();
 
-	// Reification Orb 1
 	orb1 = new THREE.Object3D();
 	createJSON('assets/json/reificationorb.json', orb1, 0xffffff, 150, 100, 100);
 	createJSON('assets/json/reificationorbcentre.json', orb1, 0x000000, 150, 100, 100);
 
-	// Reification Orb 2
 	orb2 = new THREE.Object3D();
 	createJSON('assets/json/reificationorb.json', orb2, 0xffffff, -150, 100, 100);
 	createJSON('assets/json/reificationorbcentre.json', orb2, 0x000000, -150, 100, 100);
@@ -137,9 +143,7 @@ function animate() {
 }
 
 function createJSON(json, name, colour, posx, posy, posz) {
-	
 	scene.add( name );
-
 	var loader = new THREE.JSONLoader();
 	loader.load( json, function ( geometry ) {
         var mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: colour, opacity: 1 } ) );
@@ -154,19 +158,22 @@ function createLineCube(index) {
 	colourFuck = 2.5;
 	increment = 0.5
 	var geometry = new THREE.Geometry(),
-		points = hilbert3D( new THREE.Vector3( 0,0,0 ), 200.0, 2, 0, 1, Math.floor(Math.random() * 7) + 1, 2, 4, Math.floor(Math.random() * 7) + 1, 6, 7 ),
+		points = hilbert3D( 
+			new THREE.Vector3( 0,0,0 ), 200.0, 2, 0, 1, 
+			Math.floor(Math.random() * 7) + 1, 2, 4, 
+			Math.floor(Math.random() * 7) + 1, 6, 7 ),
 		colors = [];
-
 	for (i = 0; i < points.length; i ++) {
 		geometry.vertices.push(points[ i ]);
 		colors[i] = new THREE.Color( 0xffffff );
-		colors[i].setHSL( colourfuck -= increment, 0.1, Math.max( 0, ( 200 + points[ i ].x ) / 200 ) * 0.5 );
+		colors[i].setHSL( colourFuck -= increment, 0.1, Math.max( 0, ( 200 + points[ i ].x ) / 200 ) * 0.5 );
 	}
 	geometry.colors = colors;
+
 	// lines
 	material = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 1, linewidth: 3, vertexColors: THREE.VertexColors });
 	var line, p, scale = 2.5, d = 0;
-	var parameters =  [ [ material, scale * 1.5, [0,0,0],  geometry ] ];
+	var parameters =  [ [ material, scale * 1.5, [0,2,0],  geometry ] ];
 	for (i = 0; i < parameters.length; ++i) {
 		p = parameters[ i ];
 		line = new THREE.Line( p[ 3 ],  p [0] );
@@ -174,13 +181,20 @@ function createLineCube(index) {
 		line.position.x = p[ 2 ][ 2 ];
 		line.position.y = p[ 2 ][ 1 ];
 		line.position.z = p[ 2 ][ 2 ];
-		scene.add( line );
+		lineCubeArray.push(line);
 	}
 };
 
 function createLineSpheres() {
 	var i, vertex1, vertex2, material, p,
-		parameters = [ [ 1.2, 0x8e87ff, 0.5, 1 ], [ 1.25, 0x000833, 0.8, 1 ], [ 3.0, 0xaaaaaa, 0.75, 2 ], [ 3.5, 0xffffff, 0.5, 1 ], [ 4.5, 0xffffff, 0.25, 1 ], [ 5.5, 0xffffff, 0.125, 1 ] ];
+		parameters = [ 
+			[ 1.2, 0x8e87ff, 0.5, 1 ], 
+			[ 1.25, 0x000833, 0.8, 1 ], 
+			[ 3.0, 0xaaaaaa, 0.75, 2 ], 
+			[ 3.5, 0xffffff, 0.5, 1 ], 
+			[ 4.5, 0xffffff, 0.25, 1 ], 
+			[ 5.5, 0xffffff, 0.125, 1 ] 
+		];
 	var geometry = createGeometry();
 	for( i = 0; i < parameters.length; ++ i ) {
 		p = parameters[ i ];
@@ -197,7 +211,6 @@ function createLineSpheres() {
 function createLineSphereInner() {
 	var i, vertex1, vertex2, material, p;
 	var geometry = createGeometry();
-
 	material = new THREE.LineBasicMaterial( { color: 0x87daff, opacity: 1, linewidth: 1 } );
 	lineSphere = new THREE.LineSegments( geometry, material );
 	lineSphere.scale.x = lineSphere.scale.y = lineSphere.scale.z = 0.5;
@@ -226,24 +239,17 @@ function createGeometry() {
 }
 
 function updateAudio(){
-
 	if (!isPlayingAudio)return;
 	analyser.getByteFrequencyData(freqByteData);
-
 	var length = freqByteData.length;
-
-	//GET AVG LEVEL
 	var sum = 0;
 	for(var j = 0; j < length; ++j) {
 		sum += freqByteData[j];
 	}
-
-	// Calculate the average frequency of the samples in the bin
 	var aveLevel = sum / length;
-
 	normLevel = (aveLevel / 256) * 2.5; //256 is the highest a freq data can be
 
-	//BEAT DETECTION
+	// Beat Detection
 	if (normLevel  > beatCutOff && normLevel > BEAT_MIN){
 		beatCutOff = normLevel *1.1;
 		beatTime = 0;
@@ -257,7 +263,6 @@ function updateAudio(){
 }
 
 function loadReification(){
-	//load MP3
 	loadAudio();
 }
 
@@ -300,6 +305,13 @@ function moveCamera() {
 	camera.position.z = Math.sin( timer ) * 200;
 }
 
+function changeCamera(time) {
+	var timer = Date.now() * time;
+	camera.position.x = Math.cos( timer ) * 300;
+	camera.position.y = Math.sin( timer ) * 300;
+	camera.position.z = Math.sin( timer ) * 200;
+}
+
 function render() {
 	updateAudio();
 
@@ -308,6 +320,11 @@ function render() {
 
 	orb2.rotation.x += 0.01;
 	orb2.rotation.y += 0.02;
+
+	//TweenLite.to(orb1.rotation, 12.5, { x: 5 });
+
+	// Flys orb off screen
+	// orb1.applyMatrix( new THREE.Matrix4().makeTranslation( -0.5, 0.5, -0.5 ) );
 
 	// Particles responding to audio
 	for(var i = scene2.children.length - 1; i >= 0; i--) { 
@@ -337,17 +354,19 @@ function render() {
 		moveCamera();
 	}
 
+	// Timed Events
+	// ------------
 	if(clock.getElapsedTime() < 3) {
-		// Setting particles to start transparent
+		// Setting particles to initialise as transparent
 		for(var i = scene2.children.length - 1; i >= 0; i--) {
 			materials[i].opacity = 0;
 		}
 	}
 
 	if(clock.getElapsedTime() > 3) {
-		// Setting particles to start transparent
+		// Begin Fade in of particles
 		for(var i = scene2.children.length - 1; i >= 0; i--) {
-			TweenLite.to(materials[i], 90, {opacity: 1.5 + 0.5*Math.sin(new Date().getTime() * .0025)});
+			TweenLite.to(materials[i], 120, {opacity: 1.5 + 0.5*Math.sin(new Date().getTime() * .0025)});
 		}
 	}
 	
@@ -355,6 +374,15 @@ function render() {
 		for(i = 0; i < 3; i++) {
 			createLineCube(i);
 		}
+		scene.add( lineCubeArray[0] );
+	}
+
+	if(clock.getElapsedTime() > 60 && clock.getElapsedTime() < 60.02) {
+		scene.add( lineCubeArray[2] );
+	}
+
+	if(clock.getElapsedTime() > 54 && clock.getElapsedTime() < 54.02) {
+		scene.add( lineCubeArray[1] );
 	}
 
 	var firstGlitch = 58.5;
@@ -372,6 +400,21 @@ function render() {
 	// 	createLineSpheres();
 	// 	createLineSphereInner();
 	// }
+	if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 135) {
+		changeCamera(0.00010);
+	}
+	if(clock.getElapsedTime() > 135 && clock.getElapsedTime() < 136) {
+		changeCamera(0.00015);
+	}
+	if(clock.getElapsedTime() > 136 && clock.getElapsedTime() < 137) {
+		changeCamera(0.00020);
+	}
+	if(clock.getElapsedTime() > 137 && clock.getElapsedTime() < 138) {
+		changeCamera(0.00025);
+	}
+	if(clock.getElapsedTime() > 138 && clock.getElapsedTime() < 139) {
+		changeCamera(0.00030);
+	}
 
 	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 143.99) {
 		createLineSpheres();
