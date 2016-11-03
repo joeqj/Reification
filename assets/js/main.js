@@ -2,7 +2,7 @@ var BEAT_HOLD_TIME = 60; //num of frames to hold a beat
 var BEAT_DECAY_RATE = 0.97;
 var BEAT_MIN = 0.6; //level less than this is no beat
 
-var camera, scene, renderer, composer, materials = [], particleArray = [], simpleMeshCount = 2000;
+var camera, scene, renderer, composer, materials = [], particleArray = [], parameters = [], lineCubeArray = [], simpleMeshCount = 2000;
 var totalFaces = 0;
 var lineSphere;
 var particles;
@@ -16,7 +16,7 @@ var renderScene;
 var glitchPass;
 
 var clock = new THREE.Clock(false);
-var autoMode = false;
+var autoMode = true;
 
 var width = window.innerWidth;
 var height = window.innerHeight;
@@ -39,7 +39,7 @@ function init() {
 		audioContext = new window.AudioContext();
 	} catch(e) {
 		//Web Audio API is not supported in this browser
-		alert("Sorry! This browser does not support the Web Audio API. Please use Chrome, Safari or Firefox.");
+		alert("Yo why are you using an outdated browser bro? Please use Chrome, Safari or Firefox for audio to work.");
 	}
 
 
@@ -106,6 +106,7 @@ function drawParticles(parameters) {
 		size  = parameters[i][1];
 		materials[i] = new THREE.PointsMaterial( { size: size } );
 		particles = new THREE.Points( geometry, materials[i] );
+		materials[i].transparent = true;
 		particles.rotation.x = Math.random() * 6;
 		particles.rotation.y = Math.random() * 6;
 		particles.rotation.z = Math.random() * 6;
@@ -150,16 +151,16 @@ function createJSON(json, name, colour, posx, posy, posz) {
 };
 
 function createLineCube(index) {
-	colourfuck = 2.5;
+	colourFuck = 2.5;
 	increment = 0.5
 	var geometry = new THREE.Geometry(),
 		points = hilbert3D( new THREE.Vector3( 0,0,0 ), 200.0, 2, 0, 1, Math.floor(Math.random() * 7) + 1, 2, 4, Math.floor(Math.random() * 7) + 1, 6, 7 ),
 		colors = [];
 
-	for ( i = 0; i < points.length; i ++ ) {
-		geometry.vertices.push( points[ i ] );
-		colors[ i ] = new THREE.Color( 0xffffff );
-		colors[ i ].setHSL( colourfuck -= increment, 0.1, Math.max( 0, ( 200 + points[ i ].x ) / 200 ) * 0.5 );
+	for (i = 0; i < points.length; i ++) {
+		geometry.vertices.push(points[ i ]);
+		colors[i] = new THREE.Color( 0xffffff );
+		colors[i].setHSL( colourfuck -= increment, 0.1, Math.max( 0, ( 200 + points[ i ].x ) / 200 ) * 0.5 );
 	}
 	geometry.colors = colors;
 	// lines
@@ -173,7 +174,6 @@ function createLineCube(index) {
 		line.position.x = p[ 2 ][ 2 ];
 		line.position.y = p[ 2 ][ 1 ];
 		line.position.z = p[ 2 ][ 2 ];
-
 		scene.add( line );
 	}
 };
@@ -298,7 +298,7 @@ function moveCamera() {
 	camera.position.x = Math.cos( timer ) * 300;
 	camera.position.y = Math.sin( timer ) * 300;
 	camera.position.z = Math.sin( timer ) * 200;
-};
+}
 
 function render() {
 	updateAudio();
@@ -306,11 +306,11 @@ function render() {
 	orb1.rotation.x += 0.05;
 	orb1.rotation.y += 0.0002;
 
-	orb2.rotation.x += 0.01  ;
+	orb2.rotation.x += 0.01;
 	orb2.rotation.y += 0.02;
 
 	// Particles responding to audio
-	for( var i = scene2.children.length - 1; i >= 0; i--) { 
+	for(var i = scene2.children.length - 1; i >= 0; i--) { 
 		var particle = scene2.children[i];
 		particle.position.x = normLevel * 100;
 		particle.position.y = normLevel * 100;
@@ -336,8 +336,22 @@ function render() {
 	if(autoMode == true) {
 		moveCamera();
 	}
+
+	if(clock.getElapsedTime() < 3) {
+		// Setting particles to start transparent
+		for(var i = scene2.children.length - 1; i >= 0; i--) {
+			materials[i].opacity = 0;
+		}
+	}
+
+	if(clock.getElapsedTime() > 3) {
+		// Setting particles to start transparent
+		for(var i = scene2.children.length - 1; i >= 0; i--) {
+			TweenLite.to(materials[i], 90, {opacity: 1.5 + 0.5*Math.sin(new Date().getTime() * .0025)});
+		}
+	}
 	
-	if( clock.getElapsedTime() > 3 && clock.getElapsedTime() < 3.02 ) {
+	if(clock.getElapsedTime() > 48 && clock.getElapsedTime() < 48.02) {
 		for(i = 0; i < 3; i++) {
 			createLineCube(i);
 		}
@@ -345,10 +359,10 @@ function render() {
 
 	var firstGlitch = 58.5;
 
-	if( clock.getElapsedTime() > firstGlitch && clock.getElapsedTime() < firstGlitch + 1 ||
+	if(clock.getElapsedTime() > firstGlitch && clock.getElapsedTime() < firstGlitch + 1 ||
 		clock.getElapsedTime() > firstGlitch + 4.5 && clock.getElapsedTime() < firstGlitch + 5.5 ||
 		clock.getElapsedTime() > firstGlitch + 18 && clock.getElapsedTime() < firstGlitch + 18.7 ||
-		clock.getElapsedTime() > firstGlitch + 34.8 && clock.getElapsedTime() < firstGlitch + 37.25 ) {
+		clock.getElapsedTime() > firstGlitch + 34.8 && clock.getElapsedTime() < firstGlitch + 37.25) {
 		glitchPass.generateGlitchTrigger();
 	} else {
 		glitchPass.generateTrigger();
@@ -359,13 +373,27 @@ function render() {
 	// 	createLineSphereInner();
 	// }
 
-	if( clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 143.99 ) {
+	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 143.99) {
 		createLineSpheres();
 		createLineSphereInner();
 	}
 
-	if( clock.getElapsedTime() > 167.9 ) {
-		for( var i = sceneSphere.children.length - 1; i >= 0; i-- ) { 
+	// if(clock.getElapsedTime() > 0.09 && clock.getElapsedTime() < 0.15) {
+	// 	for(var i = sceneSphere.children.length - 1; i >= 0; i--) { 
+	// 		var particle = sceneSphere.children[i];
+	// 		particle.scale.x = lineSphere.scale.y = lineSphere.scale.z = -50;
+	// 	}
+	// }
+
+	// if(clock.getElapsedTime() > 0.15) {
+	// 	for(var i = sceneSphere.children.length - 1; i >= 0; i--) { 
+	// 		var particle = sceneSphere.children[i];
+	// 		TweenLite.to(particle.scale, 90, {x = 1});
+	// 	}
+	// }
+
+	if(clock.getElapsedTime() > 161) {
+		for(var i = sceneSphere.children.length - 1; i >= 0; i--) { 
 			var particle = sceneSphere.children[i];
 			particle.scale.x = lineSphere.scale.y = lineSphere.scale.z = 0.5 + normLevel / 5;
 		}
