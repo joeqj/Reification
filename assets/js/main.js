@@ -8,7 +8,7 @@
 var BEAT_HOLD_TIME = 60; //num of frames to hold a beat
 var BEAT_DECAY_RATE = 0.97;
 var BEAT_MIN = 0.6; //level less than this is no beat
-
+var cameraTimer;
 var camera, scene, renderer, composer, materials = [], particleArray = [], parameters = [], lineCubeArray = [], simpleMeshCount = 2000;
 var totalFaces = 0;
 var lineSphere;
@@ -299,17 +299,20 @@ function postProcessing2() {
 }
 
 function moveCamera() {
-	var timer = Date.now() * 0.0005;
-	camera.position.x = Math.cos( timer ) * 300;
-	camera.position.y = Math.sin( timer ) * 300;
-	camera.position.z = Math.sin( timer ) * 200;
+	if(clock.getElapsedTime() < 134 || clock.getElapsedTime() > 167.95) {
+		cameraTimer = Date.now() * 0.0005;
+	}
+	camera.position.x = Math.cos(cameraTimer) * 300;
+	camera.position.y = Math.sin(cameraTimer) * 300;
+	camera.position.z = Math.sin(cameraTimer) * 200;
 }
 
-function changeCamera(time) {
-	var timer = Date.now() * time;
-	camera.position.x = Math.cos( timer ) * 300;
-	camera.position.y = Math.sin( timer ) * 300;
-	camera.position.z = Math.sin( timer ) * 200;
+function speedUpCamera() {
+	var tempTimer = cameraTimer;
+	cameraTimer = tempTimer + 0.025;
+	if(autoMode == true) {
+		moveCamera();
+	}
 }
 
 function render() {
@@ -400,21 +403,18 @@ function render() {
 	// 	createLineSpheres();
 	// 	createLineSphereInner();
 	// }
-	if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 135) {
-		changeCamera(0.00010);
-	}
-	if(clock.getElapsedTime() > 135 && clock.getElapsedTime() < 136) {
-		changeCamera(0.00015);
-	}
-	if(clock.getElapsedTime() > 136 && clock.getElapsedTime() < 137) {
-		changeCamera(0.00020);
-	}
-	if(clock.getElapsedTime() > 137 && clock.getElapsedTime() < 138) {
-		changeCamera(0.00025);
-	}
-	if(clock.getElapsedTime() > 138 && clock.getElapsedTime() < 139) {
-		changeCamera(0.00030);
-	}
+	if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 135 ) { speedUpCamera(); }
+	if(clock.getElapsedTime() > 135.0001 && clock.getElapsedTime() < 136 ) { speedUpCamera(); }
+	if(clock.getElapsedTime() > 136.0001 && clock.getElapsedTime() < 137 ) { speedUpCamera(); }
+	if(clock.getElapsedTime() > 137.0001 && clock.getElapsedTime() < 138 ) { speedUpCamera(); }
+	if(clock.getElapsedTime() > 138.0001 && clock.getElapsedTime() < 139 ) { speedUpCamera(); }
+	if(clock.getElapsedTime() > 139.0001 && clock.getElapsedTime() < 140 ) { speedUpCamera(); }
+	if(clock.getElapsedTime() > 140.0001 && clock.getElapsedTime() < 141 ) { speedUpCamera(); }
+	if(clock.getElapsedTime() > 141.0001 && clock.getElapsedTime() < 142 ) { speedUpCamera(); }
+	if(clock.getElapsedTime() > 142.0001 && clock.getElapsedTime() < 143 ) { speedUpCamera(); }
+	if(clock.getElapsedTime() > 143.0001 && clock.getElapsedTime() < 143.8999 ) { speedUpCamera(); }
+	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 167.94 ) { autoMode = false }
+	if(clock.getElapsedTime() > 167.945 && clock.getElapsedTime() < 167.95 ) { autoMode = true }
 
 	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 143.99) {
 		createLineSpheres();
@@ -435,6 +435,7 @@ function render() {
 	// 	}
 	// }
 
+	// Add beat detection to line sphere
 	if(clock.getElapsedTime() > 161) {
 		for(var i = sceneSphere.children.length - 1; i >= 0; i--) { 
 			var particle = sceneSphere.children[i];
