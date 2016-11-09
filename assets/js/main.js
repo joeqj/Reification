@@ -299,7 +299,7 @@ function postProcessing2() {
 }
 
 function moveCamera() {
-	if(clock.getElapsedTime() < 134 || clock.getElapsedTime() > 167.95) {
+	if(clock.getElapsedTime() < 140 || clock.getElapsedTime() > 167.95) {
 		cameraTimer = Date.now() * 0.0005;
 	}
 	camera.position.x = Math.cos(cameraTimer) * 300;
@@ -307,9 +307,8 @@ function moveCamera() {
 	camera.position.z = Math.sin(cameraTimer) * 200;
 }
 
-function speedUpCamera() {
-	var tempTimer = cameraTimer;
-	cameraTimer = tempTimer + 0.025;
+function controlCamera(speed) {
+	cameraTimer =  speed;
 	if(autoMode == true) {
 		moveCamera();
 	}
@@ -317,12 +316,6 @@ function speedUpCamera() {
 
 function render() {
 	updateAudio();
-
-	orb1.rotation.x += 0.05;
-	orb1.rotation.y += 0.0002;
-
-	orb2.rotation.x += 0.01;
-	orb2.rotation.y += 0.02;
 
 	//TweenLite.to(orb1.rotation, 12.5, { x: 5 });
 
@@ -359,6 +352,14 @@ function render() {
 
 	// Timed Events
 	// ------------
+	if (clock.getElapsedTime() < 134) {
+		orb1.rotation.x += 0.05;
+		orb1.rotation.y += 0.0002;
+
+		orb2.rotation.x += 0.01;
+		orb2.rotation.y += 0.02;
+
+	}
 	if(clock.getElapsedTime() < 3) {
 		// Setting particles to initialise as transparent
 		for(var i = scene2.children.length - 1; i >= 0; i--) {
@@ -403,18 +404,49 @@ function render() {
 	// 	createLineSpheres();
 	// 	createLineSphereInner();
 	// }
-	if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 135 ) { speedUpCamera(); }
-	if(clock.getElapsedTime() > 135.0001 && clock.getElapsedTime() < 136 ) { speedUpCamera(); }
-	if(clock.getElapsedTime() > 136.0001 && clock.getElapsedTime() < 137 ) { speedUpCamera(); }
-	if(clock.getElapsedTime() > 137.0001 && clock.getElapsedTime() < 138 ) { speedUpCamera(); }
-	if(clock.getElapsedTime() > 138.0001 && clock.getElapsedTime() < 139 ) { speedUpCamera(); }
-	if(clock.getElapsedTime() > 139.0001 && clock.getElapsedTime() < 140 ) { speedUpCamera(); }
-	if(clock.getElapsedTime() > 140.0001 && clock.getElapsedTime() < 141 ) { speedUpCamera(); }
-	if(clock.getElapsedTime() > 141.0001 && clock.getElapsedTime() < 142 ) { speedUpCamera(); }
-	if(clock.getElapsedTime() > 142.0001 && clock.getElapsedTime() < 143 ) { speedUpCamera(); }
-	if(clock.getElapsedTime() > 143.0001 && clock.getElapsedTime() < 143.8999 ) { speedUpCamera(); }
+	if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 136 ) { 
+		orb1.rotation.x += 0.04;
+		orb1.rotation.y += 0.0002;
+		orb2.rotation.x += 0.008;
+		orb2.rotation.y += 0.02;
+	}
+	if(clock.getElapsedTime() > 136 && clock.getElapsedTime() < 138 ) { 
+		orb1.rotation.x += 0.03;
+		orb1.rotation.y += 0.0002;
+		orb2.rotation.x += 0.006;
+		orb2.rotation.y += 0.02;
+	}
+	if(clock.getElapsedTime() > 138 && clock.getElapsedTime() < 140 ) { 
+		orb1.rotation.x += 0.02;
+		orb1.rotation.y += 0.0002;
+		orb2.rotation.x += 0.004;
+		orb2.rotation.y += 0.02;
+	}
+	if(clock.getElapsedTime() > 140 && clock.getElapsedTime() < 142 ) { 
+		controlCamera(Date.now() * 0.0025);
+		orb1.rotation.x += 0.01;
+		orb1.rotation.y += 0.0002;
+		orb2.rotation.x += 0.002;
+		orb2.rotation.y += 0.02; 
+	}
+	if(clock.getElapsedTime() > 142 && clock.getElapsedTime() < 143.9 ) { 
+		controlCamera(Date.now() * 0.0030); 
+		orb1.rotation.x += 0;
+		orb1.rotation.y += 0.0002;
+		orb2.rotation.x += 0;
+		orb2.rotation.y += 0.02;
+	}
+
 	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 167.94 ) { autoMode = false }
-	if(clock.getElapsedTime() > 167.945 && clock.getElapsedTime() < 167.95 ) { autoMode = true }
+	if(clock.getElapsedTime() > 167.945 ) { autoMode = true }
+
+	// if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 135 ) {
+	// 	TweenLite.to(orb1.rotation, 8.5, { x: 5 });
+	// }
+
+	// if (clock.getElapsedTime() > 135) {
+	// 	TweenLite.to(orb2.rotation, 8.5, { x: 5 });
+	// }
 
 	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 143.99) {
 		createLineSpheres();
