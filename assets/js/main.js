@@ -18,6 +18,7 @@ var object, light;
 var beatCutOff = 20;
 var beatTime = 0; //avoid auto beat at start
 var geometry;
+var mirrorPass;
 var lineSphere;
 var renderScene;
 var glitchPass;
@@ -267,8 +268,9 @@ function loadReification(){
 }
 
 function postProcessing() {
+	renderPass = new THREE.RenderPass(scene, camera)
 	composer = new THREE.EffectComposer(renderer);
-	composer.addPass(new THREE.RenderPass(scene, camera));
+	composer.addPass(renderPass);
 	
 	kaleidoPass = new THREE.ShaderPass(THREE.KaleidoShader);
 	kaleidoPass.renderToScreen = false;
@@ -282,6 +284,17 @@ function postProcessing() {
 	shaderPass.uniforms[ 'amount' ].value = 0.0015;
 	shaderPass.renderToScreen = true;
 	composer.addPass(shaderPass);
+
+	mirrorPass = new THREE.ShaderPass( THREE.MirrorShader );
+	mirrorPass.renderToScreen = false;
+	composer.addPass( mirrorPass );
+
+	var clearMask = new THREE.ClearMaskPass();
+	composer.addPass(clearMask);
+
+	techPass = new THREE.ShaderPass( THREE.VerticalBlurShader );
+	techPass.renderToScreen = false;
+	composer.addPass(techPass);
 }
 
 function postProcessing2() {
@@ -332,7 +345,11 @@ function render() {
 		} else {
 			materials[i].color.setHex( 0xffffff );
 		}
-	}	
+	}
+
+	for(i = 0; i < 3; i++) {
+		createLineCube(i);
+	}
 
 	controls.update();
 
@@ -375,18 +392,21 @@ function render() {
 	}
 	
 	if(clock.getElapsedTime() > 48 && clock.getElapsedTime() < 48.02) {
-		for(i = 0; i < 3; i++) {
-			createLineCube(i);
-		}
-		scene.add( lineCubeArray[0] );
+		var line1 = lineCubeArray[0]
+		line1.name = "line1";
+		scene.add( line1 );
 	}
 
 	if(clock.getElapsedTime() > 60 && clock.getElapsedTime() < 60.02) {
-		scene.add( lineCubeArray[2] );
+		var line2 = lineCubeArray[2]
+		line2.name = "line2";
+		scene.add( line2 );
 	}
 
 	if(clock.getElapsedTime() > 54 && clock.getElapsedTime() < 54.02) {
-		scene.add( lineCubeArray[1] );
+		var line3 = lineCubeArray[1]
+		line3.name = "line3";
+		scene.add( line3 );
 	}
 
 	var firstGlitch = 58.5;
@@ -404,7 +424,11 @@ function render() {
 	// 	createLineSpheres();
 	// 	createLineSphereInner();
 	// }
-	if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 136 ) { 
+	if(clock.getElapsedTime() > 132 && clock.getElapsedTime() < 134 ) {
+		mirrorPass.renderToScreen = true;
+		techPass.renderToScreen = true;
+	}
+	if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 136 ) {
 		orb1.rotation.x += 0.04;
 		orb1.rotation.y += 0.0002;
 		orb2.rotation.x += 0.008;
@@ -416,18 +440,16 @@ function render() {
 		orb2.rotation.x += 0.006;
 		orb2.rotation.y += 0.02;
 	}
-	if(clock.getElapsedTime() > 138 && clock.getElapsedTime() < 140 ) { 
+	if(clock.getElapsedTime() > 138 && clock.getElapsedTime() < 140 ) {
+		mirrorPass.renderToScreen = false;
+		controlCamera(Date.now() * 0.0015); 
 		orb1.rotation.x += 0.02;
 		orb1.rotation.y += 0.0002;
 		orb2.rotation.x += 0.004;
 		orb2.rotation.y += 0.02;
 	}
-	if(clock.getElapsedTime() > 140 && clock.getElapsedTime() < 142 ) { 
-		controlCamera(Date.now() * 0.0025);
-		orb1.rotation.x += 0.01;
-		orb1.rotation.y += 0.0002;
-		orb2.rotation.x += 0.002;
-		orb2.rotation.y += 0.02; 
+	if (clock.getElapsedTime > 140 && clock.getElapsedTime() < 142) {
+		controlCamera(Date.now() * 0.0020); 
 	}
 	if(clock.getElapsedTime() > 142 && clock.getElapsedTime() < 143.9 ) { 
 		controlCamera(Date.now() * 0.0030); 
@@ -436,9 +458,17 @@ function render() {
 		orb2.rotation.x += 0;
 		orb2.rotation.y += 0.02;
 	}
-
-	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 167.94 ) { autoMode = false }
-	if(clock.getElapsedTime() > 167.945 ) { autoMode = true }
+	if(clock.getElapsedTime() > 142 && clock.getElapsedTime() < 143.9 ) { 
+		mirrorPass.renderToScreen = true;
+	}
+	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 167.94 ) { 
+		autoMode = false;
+	}
+	if(clock.getElapsedTime() > 167.945 ) { 
+		autoMode = true; 
+		techPass.renderToScreen = false;
+		mirrorPass.renderToScreen = false; 
+	}
 
 	// if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 135 ) {
 	// 	TweenLite.to(orb1.rotation, 8.5, { x: 5 });
@@ -447,12 +477,19 @@ function render() {
 	// if (clock.getElapsedTime() > 135) {
 	// 	TweenLite.to(orb2.rotation, 8.5, { x: 5 });
 	// }
-
+	if (clock.getElapsedTime() > 143.9) {
+		var line1 = scene.getObjectByName("line1");
+		var line2 = scene.getObjectByName("line2");
+		var line3 = scene.getObjectByName("line3");
+		mirrorPass.renderToScreen = true;
+	}
 	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 143.99) {
+    	scene.remove( line1 );
+    	scene.remove( line2 );
+    	scene.remove( line3 );
 		createLineSpheres();
 		createLineSphereInner();
 	}
-
 	// if(clock.getElapsedTime() > 0.09 && clock.getElapsedTime() < 0.15) {
 	// 	for(var i = sceneSphere.children.length - 1; i >= 0; i--) { 
 	// 		var particle = sceneSphere.children[i];
