@@ -16,6 +16,7 @@ var particles;
 var clearArray = [];
 var object, light;
 var beatCutOff = 20;
+var clearLines = false;
 var beatTime = 0; //avoid auto beat at start
 var geometry;
 var mirrorPass;
@@ -285,16 +286,19 @@ function postProcessing() {
 	shaderPass.renderToScreen = true;
 	composer.addPass(shaderPass);
 
+	composer2 = new THREE.EffectComposer(renderer);
+	composer2.addPass(renderPass);
+
 	mirrorPass = new THREE.ShaderPass( THREE.MirrorShader );
 	mirrorPass.renderToScreen = false;
-	composer.addPass( mirrorPass );
+	composer2.addPass( mirrorPass );
 
-	var clearMask = new THREE.ClearMaskPass();
-	composer.addPass(clearMask);
+	// var clearMask = new THREE.ClearMaskPass();
+	// composer.addPass(clearMask);
 
-	techPass = new THREE.ShaderPass( THREE.VerticalBlurShader );
-	techPass.renderToScreen = false;
-	composer.addPass(techPass);
+	// techPass = new THREE.ShaderPass( THREE.VerticalBlurShader );
+	// techPass.renderToScreen = false;
+	// composer.addPass(techPass);
 }
 
 function postProcessing2() {
@@ -355,6 +359,10 @@ function render() {
 
 	renderer.clear();
 	composer.render(); // Orbs, Lines - RGB Shift + Glitch
+	renderer.clearDepth();
+	if(clock.getElapsedTime() < 168) {
+		composer2.render(); // Orbs, Lines - RGB Shift + Glitch
+	}
 	renderer.clearDepth();
 	renderer.render( sceneSphere, camera ); // Inner Sphere
 	renderer.clearDepth();
@@ -426,7 +434,7 @@ function render() {
 	// }
 	if(clock.getElapsedTime() > 132 && clock.getElapsedTime() < 134 ) {
 		mirrorPass.renderToScreen = true;
-		techPass.renderToScreen = true;
+		// techPass.renderToScreen = true;
 	}
 	if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 136 ) {
 		orb1.rotation.x += 0.04;
@@ -440,34 +448,25 @@ function render() {
 		orb2.rotation.x += 0.006;
 		orb2.rotation.y += 0.02;
 	}
-	if(clock.getElapsedTime() > 138 && clock.getElapsedTime() < 140 ) {
-		mirrorPass.renderToScreen = false;
-		controlCamera(Date.now() * 0.0015); 
+	if(clock.getElapsedTime() > 138 && clock.getElapsedTime() < 142 ) {
+		controlCamera(Date.now() * 0.0020); 
 		orb1.rotation.x += 0.02;
 		orb1.rotation.y += 0.0002;
 		orb2.rotation.x += 0.004;
 		orb2.rotation.y += 0.02;
 	}
-	if (clock.getElapsedTime > 140 && clock.getElapsedTime() < 142) {
-		controlCamera(Date.now() * 0.0020); 
-	}
 	if(clock.getElapsedTime() > 142 && clock.getElapsedTime() < 143.9 ) { 
-		controlCamera(Date.now() * 0.0030); 
 		orb1.rotation.x += 0;
 		orb1.rotation.y += 0.0002;
 		orb2.rotation.x += 0;
 		orb2.rotation.y += 0.02;
 	}
-	if(clock.getElapsedTime() > 142 && clock.getElapsedTime() < 143.9 ) { 
-		mirrorPass.renderToScreen = true;
-	}
-	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 167.94 ) { 
+	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 167.94 ) {
+		mirrorPass.renderToScreen = false;
 		autoMode = false;
 	}
 	if(clock.getElapsedTime() > 167.945 ) { 
 		autoMode = true; 
-		techPass.renderToScreen = false;
-		mirrorPass.renderToScreen = false; 
 	}
 
 	// if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 135 ) {
@@ -481,28 +480,21 @@ function render() {
 		var line1 = scene.getObjectByName("line1");
 		var line2 = scene.getObjectByName("line2");
 		var line3 = scene.getObjectByName("line3");
-		mirrorPass.renderToScreen = true;
 	}
 	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 143.99) {
-    	scene.remove( line1 );
-    	scene.remove( line2 );
-    	scene.remove( line3 );
 		createLineSpheres();
 		createLineSphereInner();
+		
+		if (clearLines == false) {
+			scene.remove( line1 );
+	    	scene.remove( line2 );
+	    	scene.remove( line3 );
+	    	line1 = null;
+	    	line2 = null;
+	    	line3 = null;
+	    	clearLines = true;
+		}
 	}
-	// if(clock.getElapsedTime() > 0.09 && clock.getElapsedTime() < 0.15) {
-	// 	for(var i = sceneSphere.children.length - 1; i >= 0; i--) { 
-	// 		var particle = sceneSphere.children[i];
-	// 		particle.scale.x = lineSphere.scale.y = lineSphere.scale.z = -50;
-	// 	}
-	// }
-
-	// if(clock.getElapsedTime() > 0.15) {
-	// 	for(var i = sceneSphere.children.length - 1; i >= 0; i--) { 
-	// 		var particle = sceneSphere.children[i];
-	// 		TweenLite.to(particle.scale, 90, {x = 1});
-	// 	}
-	// }
 
 	// Add beat detection to line sphere
 	if(clock.getElapsedTime() > 161) {
