@@ -9,7 +9,8 @@ var BEAT_HOLD_TIME = 60; //num of frames to hold a beat
 var BEAT_DECAY_RATE = 0.97;
 var BEAT_MIN = 0.6; //level less than this is no beat
 var cameraTimer;
-var camera, scene, renderer, composer, materials = [], parameters = [], lineCubeArray = [];
+var camera, scene, scene2, renderer, composer, composer2, controls, materials = [], parameters = [], lineCubeArray = [];
+var orb1, orb2;
 var beatCutOff = 20;
 var clearLines = false;
 var mirrorPass;
@@ -356,7 +357,7 @@ function render() {
 		}
 	}
 
-	if(clock.getElapsedTime() > 3) {
+	if(clock.getElapsedTime() > 3 && clock.getElapsedTime() < 4) {
 		// Begin Fade in of particles
 		for(var i = scene2.children.length - 1; i >= 0; i--) {
 			TweenLite.to(materials[i], 120, {opacity: 1.5 + 0.5*Math.sin(new Date().getTime() * .0025)});
