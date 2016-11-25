@@ -9,34 +9,18 @@ var BEAT_HOLD_TIME = 60; //num of frames to hold a beat
 var BEAT_DECAY_RATE = 0.97;
 var BEAT_MIN = 0.6; //level less than this is no beat
 var cameraTimer;
-var camera, scene, renderer, composer, materials = [], particleArray = [], parameters = [], lineCubeArray = [], simpleMeshCount = 2000;
-var totalFaces = 0;
-var lineSphere;
-var particles;
-var clearArray = [];
-var object, light;
+var camera, scene, renderer, composer, materials = [], parameters = [], lineCubeArray = [];
 var beatCutOff = 20;
 var clearLines = false;
-var beatTime = 0; //avoid auto beat at start
-var geometry;
 var mirrorPass;
 var lineSphere;
-var renderScene;
 var glitchPass;
-var axis;
 
 var clock = new THREE.Clock(false);
 var autoMode = true;
 
 var width = window.innerWidth;
 var height = window.innerHeight;
-
-var rtParameters = {
-	minFilter: THREE.LinearFilter,
-	magFilter: THREE.LinearFilter,
-	format: THREE.RGBFormat,
-	stencilBuffer: true
-};
 
 init();
 animate();
@@ -47,7 +31,7 @@ function init() {
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
 		audioContext = new window.AudioContext();
 	} catch(e) {
-		alert("Why are you using an outdated browser bro? Please use Chrome or Firefox for audio to work.");
+		alert("Why are you using an outdated browser bro? Use Chrome or Firefox for audio to work.");
 	}
 
 	renderer = new THREE.WebGLRenderer();
@@ -65,9 +49,6 @@ function init() {
 	controls.enablePan = false;
 	controls.update();
 
-	//declared once at the top of your code
-	//var axis = new THREE.Vector3(0.5,0.5,0);//tilted a bit on x and y - feel free to plug your different axis here
-
 	scene = new THREE.Scene();
 	scene2 = new THREE.Scene();
 	sceneSphere = new THREE.Scene();
@@ -81,12 +62,12 @@ function init() {
 	createJSON('assets/json/reificationorbcentre.json', orb2, 0x000000, -150, 100, 100);
 	
 	scene.add( new THREE.AmbientLight( 0x222222 ) );
-	light = new THREE.DirectionalLight( 0xffffff );
+	var light = new THREE.DirectionalLight( 0xffffff );
 	light.position.set( 1, 1, 1 );
 	scene.add( light );
 
 	// Sprites
-	geometry = new THREE.Geometry();
+	var geometry = new THREE.Geometry();
 	for ( i = 0; i < 200; i ++ ) {
 		var vertex = new THREE.Vector3();
 		vertex.x = Math.random() * 2000 - 1000;
@@ -101,7 +82,7 @@ function init() {
 		[ [0.85, 1, 0.5], 2 ],
 		[ [0.80, 1, 0.5], 1 ]
 	];
-	drawParticles(parameters);
+	drawParticles(geometry, parameters);
 
 	postProcessing();
 
@@ -109,11 +90,11 @@ function init() {
 	window.addEventListener( 'dblclick', startAuto, false );
 }
 
-function drawParticles(parameters) {
+function drawParticles(geometry, parameters) {
 	for ( i = 0; i < parameters.length; i ++ ) {
 		size  = parameters[i][1];
 		materials[i] = new THREE.PointsMaterial( { size: size } );
-		particles = new THREE.Points( geometry, materials[i] );
+		var particles = new THREE.Points( geometry, materials[i] );
 		materials[i].transparent = true;
 		particles.rotation.x = Math.random() * 6;
 		particles.rotation.y = Math.random() * 6;
@@ -127,7 +108,6 @@ function onWindowResize() {
 	camera.updateProjectionMatrix();
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	composer.setSize( window.innerWidth, window.innerHeight );
-	//composer2.setSize( window.innerWidth, window.innerHeight );
 }
 
 function startAuto() {
@@ -141,7 +121,7 @@ function startAuto() {
 function animate() {
 	requestAnimationFrame(animate);
 	render();
-	//stats.update();
+	// stats.update();
 }
 
 function createJSON(json, name, colour, posx, posy, posz) {
@@ -245,6 +225,7 @@ function updateAudio(){
 	analyser.getByteFrequencyData(freqByteData);
 	var length = freqByteData.length;
 	var sum = 0;
+	var beatTime = 0;
 	for(var j = 0; j < length; ++j) {
 		sum += freqByteData[j];
 	}
@@ -254,7 +235,6 @@ function updateAudio(){
 	// Beat Detection
 	if (normLevel  > beatCutOff && normLevel > BEAT_MIN){
 		beatCutOff = normLevel *1.1;
-		beatTime = 0;
 	}else{
 		if (beatTime < BEAT_HOLD_TIME){
 			beatTime ++;
@@ -301,22 +281,8 @@ function postProcessing() {
 	// composer.addPass(techPass);
 }
 
-function postProcessing2() {
-	var clearMask = new THREE.ClearMaskPass();
-	composer = new THREE.EffectComposer( renderer );
-	composer.addPass( new THREE.RenderPass( scene, camera ) );
-	var glitchPass = new THREE.GlitchPass();
-	glitchPass.renderToScreen = true;
-
-	var effect = new THREE.ShaderPass( THREE.RGBShiftShader );
-	effect.uniforms[ 'amount' ].value = 0.0015;
-	effect.renderToScreen = true;
-	composer.addPass( effect );
-	composer.addPass( clearMask );
-}
-
 function moveCamera() {
-	if(clock.getElapsedTime() < 140 || clock.getElapsedTime() > 167.95) {
+	if(clock.getElapsedTime() < 138 || clock.getElapsedTime() > 167.95) {
 		cameraTimer = Date.now() * 0.0005;
 	}
 	camera.position.x = Math.cos(cameraTimer) * 300;
@@ -333,8 +299,6 @@ function controlCamera(speed) {
 
 function render() {
 	updateAudio();
-
-	//TweenLite.to(orb1.rotation, 12.5, { x: 5 });
 
 	// Flys orb off screen
 	// orb1.applyMatrix( new THREE.Matrix4().makeTranslation( -0.5, 0.5, -0.5 ) );
@@ -428,10 +392,6 @@ function render() {
 		glitchPass.generateTrigger();
 	}
 
-	// if( clock.getElapsedTime() > 0 && clock.getElapsedTime() < 0.09 ) {
-	// 	createLineSpheres();
-	// 	createLineSphereInner();
-	// }
 	if(clock.getElapsedTime() > 132 && clock.getElapsedTime() < 134 ) {
 		mirrorPass.renderToScreen = true;
 		// techPass.renderToScreen = true;
@@ -449,13 +409,14 @@ function render() {
 		orb2.rotation.y += 0.02;
 	}
 	if(clock.getElapsedTime() > 138 && clock.getElapsedTime() < 142 ) {
-		controlCamera(Date.now() * 0.0020); 
+		controlCamera(Date.now() * 0.0010); 
 		orb1.rotation.x += 0.02;
 		orb1.rotation.y += 0.0002;
 		orb2.rotation.x += 0.004;
 		orb2.rotation.y += 0.02;
 	}
-	if(clock.getElapsedTime() > 142 && clock.getElapsedTime() < 143.9 ) { 
+	if(clock.getElapsedTime() > 142 && clock.getElapsedTime() < 143.9 ) {
+		controlCamera(Date.now() * 0.0020); 
 		orb1.rotation.x += 0;
 		orb1.rotation.y += 0.0002;
 		orb2.rotation.x += 0;
@@ -465,18 +426,6 @@ function render() {
 		mirrorPass.renderToScreen = false;
 		autoMode = false;
 	}
-	// if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 135 ) {
-	// 	TweenLite.to(orb1.rotation, 8.5, { x: 5 });
-	// }
-
-	// if (clock.getElapsedTime() > 135) {
-	// 	TweenLite.to(orb2.rotation, 8.5, { x: 5 });
-	// }
-	// if (clock.getElapsedTime() > 143.9) {
-	// 	var line1 = scene.getObjectByName("line1");
-	// 	var line2 = scene.getObjectByName("line2");
-	// 	var line3 = scene.getObjectByName("line3");
-	// }
 	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 143.99) {
 		createLineSpheres();
 		createLineSphereInner();
