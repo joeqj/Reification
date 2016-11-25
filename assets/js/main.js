@@ -465,10 +465,6 @@ function render() {
 		mirrorPass.renderToScreen = false;
 		autoMode = false;
 	}
-	if(clock.getElapsedTime() > 167.945 ) { 
-		autoMode = true; 
-	}
-
 	// if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 135 ) {
 	// 	TweenLite.to(orb1.rotation, 8.5, { x: 5 });
 	// }
@@ -476,22 +472,19 @@ function render() {
 	// if (clock.getElapsedTime() > 135) {
 	// 	TweenLite.to(orb2.rotation, 8.5, { x: 5 });
 	// }
-	if (clock.getElapsedTime() > 143.9) {
-		var line1 = scene.getObjectByName("line1");
-		var line2 = scene.getObjectByName("line2");
-		var line3 = scene.getObjectByName("line3");
-	}
+	// if (clock.getElapsedTime() > 143.9) {
+	// 	var line1 = scene.getObjectByName("line1");
+	// 	var line2 = scene.getObjectByName("line2");
+	// 	var line3 = scene.getObjectByName("line3");
+	// }
 	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 143.99) {
 		createLineSpheres();
 		createLineSphereInner();
 		
 		if (clearLines == false) {
-			scene.remove( line1 );
-	    	scene.remove( line2 );
-	    	scene.remove( line3 );
-	    	line1 = null;
-	    	line2 = null;
-	    	line3 = null;
+			scene.remove( scene.getObjectByName("line1") );
+	    	scene.remove( scene.getObjectByName("line2") );
+	    	scene.remove( scene.getObjectByName("line3") );
 	    	clearLines = true;
 		}
 	}
@@ -503,4 +496,8 @@ function render() {
 			particle.scale.x = lineSphere.scale.y = lineSphere.scale.z = 0.5 + normLevel / 5;
 		}
 	}	
+
+	if( clock.getElapsedTime() > 167.95) {
+		autoMode = true;
+	}
 }
