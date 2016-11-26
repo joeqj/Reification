@@ -17,6 +17,8 @@ var mirrorPass;
 var lineSphere;
 var glitchPass;
 
+var stats;
+
 var clock = new THREE.Clock(false);
 var autoMode = true;
 
@@ -28,6 +30,12 @@ animate();
 loadReification();
 
 function init() {
+	stats = new Stats();
+	stats.showPanel( 2 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+	document.body.appendChild( stats.dom );
+
+
+
 	try {
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
 		audioContext = new window.AudioContext();
@@ -62,11 +70,7 @@ function init() {
 	createJSON('assets/json/reificationorb.json', orb2, 0xffffff, -150, 100, 100);
 	createJSON('assets/json/reificationorbcentre.json', orb2, 0x000000, -150, 100, 100);
 	
-	scene.add( new THREE.AmbientLight( 0x222222 ) );
-	var light = new THREE.DirectionalLight( 0xffffff );
-	light.position.set( 1, 1, 1 );
-	scene.add( light );
-
+	
 	// Sprites
 	var geometry = new THREE.Geometry();
 	for ( i = 0; i < 200; i ++ ) {
@@ -120,9 +124,10 @@ function startAuto() {
 }
 
 function animate() {
-	requestAnimationFrame(animate);
+	stats.begin();
 	render();
-	// stats.update();
+	stats.end();
+	requestAnimationFrame(animate);
 }
 
 function createJSON(json, name, colour, posx, posy, posz) {
@@ -316,10 +321,6 @@ function render() {
 		}
 	}
 
-	for(i = 0; i < 3; i++) {
-		createLineCube(i);
-	}
-
 	controls.update();
 
 	renderer.clear();
@@ -328,7 +329,6 @@ function render() {
 	if(clock.getElapsedTime() < 168) {
 		composer2.render(); // Orbs, Lines - RGB Shift + Glitch
 	}
-	renderer.clearDepth();
 	renderer.render( sceneSphere, camera ); // Inner Sphere
 	renderer.clearDepth();
 	renderer.render( scene2, camera ); // Stars
@@ -342,6 +342,12 @@ function render() {
 
 	// Timed Events
 	// ------------
+	if (clock.getElapsedTime() < 1) {
+		for(i = 0; i < 3; i++) {
+			createLineCube(i);
+		}
+	}
+	
 	if (clock.getElapsedTime() < 134) {
 		orb1.rotation.x += 0.05;
 		orb1.rotation.y += 0.0002;
