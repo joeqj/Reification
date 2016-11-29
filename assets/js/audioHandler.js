@@ -45,10 +45,15 @@ function loadAudioBuffer(url) {
 }
 
 function finishLoad() {
-	source.buffer = audioBuffer;
-	source.loop = false;
-	source.start(0.0);
-	startViz();
+	document.getElementById('load').innerHTML = 'Play';
+	$(".play").click(function(e){
+	    e.preventDefault();
+	    $(".intro").fadeOut();
+	    startViz();
+	    setTimeout(function() {
+		  $(".intro").remove();
+		}, 3000);
+	});
 }
 
 function initAudio(data) {
@@ -78,15 +83,14 @@ function createAudio() {
 
 	//analyser.connect(processor);
 	//processor.connect(audioContext.destination);
-
-	source.start(0);
-
-	source.loop = true;
-
-	startViz();
+	
 }
 
 function startViz(){
+	source.buffer = audioBuffer;
+	source.loop = false;
+	source.start(0.0);
+
 	freqByteData = new Uint8Array(analyser.frequencyBinCount);
 	levels = [];
 	isPlayingAudio = true;

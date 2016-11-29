@@ -9,10 +9,12 @@ var BEAT_HOLD_TIME = 60; //num of frames to hold a beat
 var BEAT_DECAY_RATE = 0.97;
 var BEAT_MIN = 0.6; //level less than this is no beat
 var cameraTimer;
-var camera, scene, scene2, sceneSphere, renderer, composer, composer2, controls, materials = [], parameters = [], lineCubeArray = [];
+var camera, scene, scene2, sceneSphere, crossScene, renderer, composer, composer2, controls, materials = [], parameters = [], lineCubeArray = [];
 var orb1, orb2;
+var kaleidoPass;
 var beatCutOff = 20;
 var clearLines = false;
+var kaleido = false;
 var mirrorPass;
 var lineSphere;
 var glitchPass;
@@ -53,6 +55,7 @@ function init() {
 	scene = new THREE.Scene();
 	scene2 = new THREE.Scene();
 	sceneSphere = new THREE.Scene();
+	sceneBlackSphere = new THREE.Scene();
 
 	orb1 = new THREE.Object3D();
 	createJSON('assets/json/reificationorb.json', orb1, 0xffffff, 150, 100, 100);
@@ -121,6 +124,7 @@ function animate() {
 }
 
 function createJSON(json, name, colour, posx, posy, posz) {
+	name.name = name;
 	scene.add( name );
 	var loader = new THREE.JSONLoader();
 	loader.load( json, function ( geometry ) {
@@ -177,6 +181,7 @@ function createLineSpheres() {
 	for( i = 0; i < parameters.length; ++ i ) {
 		p = parameters[ i ];
 		material = new THREE.LineBasicMaterial( { color: p[ 1 ], opacity: p[ 2 ], linewidth: p[ 3 ] } );
+		material.transparent = true;
 		lineSphere = new THREE.LineSegments( geometry, material );
 		lineSphere.scale.x = lineSphere.scale.y = lineSphere.scale.z = p[ 0 ];
 		lineSphere.originalScale = p[ 2 ];
@@ -186,16 +191,17 @@ function createLineSpheres() {
 	}
 };
 
-function createLineSphereInner() {
+function createLineSphereInner(tempColour, tempScene) {
 	var i, vertex1, vertex2, material, p;
 	var geometry = createGeometry();
-	material = new THREE.LineBasicMaterial( { color: 0x87daff, opacity: 1, linewidth: 1 } );
+	material = new THREE.LineBasicMaterial( { color: tempColour, opacity: 1, linewidth: 1 } );
+	material.transparent = true;
 	lineSphere = new THREE.LineSegments( geometry, material );
 	lineSphere.scale.x = lineSphere.scale.y = lineSphere.scale.z = 0.5;
 	lineSphere.originalScale = 1;
 	lineSphere.rotation.y = Math.random() * Math.PI;
 	lineSphere.updateMatrix();
-	sceneSphere.add( lineSphere );
+	tempScene.add( lineSphere );
 };
 
 function createGeometry() {
@@ -248,10 +254,10 @@ function postProcessing() {
 	renderPass = new THREE.RenderPass(scene, camera)
 	composer = new THREE.EffectComposer(renderer);
 	composer.addPass(renderPass);
-	
-	kaleidoPass = new THREE.ShaderPass(THREE.KaleidoShader);
-	kaleidoPass.renderToScreen = false;
-	//composer.addPass(kaleidoPass);
+
+	renderSpherePass = new THREE.RenderPass(scene2, camera)
+	composer2 = new THREE.EffectComposer(renderer);
+	composer2.addPass(renderSpherePass);
 
 	glitchPass = new THREE.GlitchPass();
 	glitchPass.renderToScreen = false;
@@ -262,19 +268,16 @@ function postProcessing() {
 	shaderPass.renderToScreen = true;
 	composer.addPass(shaderPass);
 
-	composer2 = new THREE.EffectComposer(renderer);
-	composer2.addPass(renderPass);
-
 	mirrorPass = new THREE.ShaderPass( THREE.MirrorShader );
 	mirrorPass.renderToScreen = false;
-	composer2.addPass( mirrorPass );
+	composer.addPass( mirrorPass );
 
-	// var clearMask = new THREE.ClearMaskPass();
-	// composer.addPass(clearMask);
+	techPass = new THREE.ShaderPass( THREE.VerticalBlurShader );
+	techPass.renderToScreen = false;
+	composer.addPass(techPass);
 
-	// techPass = new THREE.ShaderPass( THREE.VerticalBlurShader );
-	// techPass.renderToScreen = false;
-	// composer.addPass(techPass);
+	kaleidoPass = new THREE.ShaderPass(THREE.KaleidoShader);
+	kaleidoPass.renderToScreen = true;
 }
 
 function moveCamera() {
@@ -316,10 +319,11 @@ function render() {
 	renderer.clear();
 	composer.render(); // Orbs, Lines - RGB Shift + Glitch
 	renderer.clearDepth();
-	if(clock.getElapsedTime() < 168) {
-		composer2.render(); // Orbs, Lines - RGB Shift + Glitch
-	}
+	composer2.render(); // Orbs, Lines - RGB Shift + Glitch
+	renderer.clearDepth();
 	renderer.render( sceneSphere, camera ); // Inner Sphere
+	renderer.clearDepth();
+	renderer.render( sceneBlackSphere, camera ); // Inner Sphere
 	renderer.clearDepth();
 	renderer.render( scene2, camera ); // Stars
 	renderer.clearDepth();
@@ -391,7 +395,6 @@ function render() {
 
 	if(clock.getElapsedTime() > 132 && clock.getElapsedTime() < 134 ) {
 		mirrorPass.renderToScreen = true;
-		// techPass.renderToScreen = true;
 	}
 	if(clock.getElapsedTime() > 134 && clock.getElapsedTime() < 136 ) {
 		orb1.rotation.x += 0.04;
@@ -405,27 +408,28 @@ function render() {
 		orb2.rotation.x += 0.006;
 		orb2.rotation.y += 0.02;
 	}
-	if(clock.getElapsedTime() > 138 && clock.getElapsedTime() < 142 ) {
-		controlCamera(Date.now() * 0.0010); 
+	if(clock.getElapsedTime() > 138 && clock.getElapsedTime() < 142 ) { 
 		orb1.rotation.x += 0.02;
 		orb1.rotation.y += 0.0002;
 		orb2.rotation.x += 0.004;
 		orb2.rotation.y += 0.02;
 	}
+	if(clock.getElapsedTime() > 138 && clock.getElapsedTime() < 143.9 ) {
+		controlCamera(Date.now() * 0.0011);
+	}
 	if(clock.getElapsedTime() > 142 && clock.getElapsedTime() < 143.9 ) {
-		controlCamera(Date.now() * 0.0020); 
 		orb1.rotation.x += 0;
 		orb1.rotation.y += 0.0002;
 		orb2.rotation.x += 0;
 		orb2.rotation.y += 0.02;
 	}
 	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 167.94 ) {
-		mirrorPass.renderToScreen = false;
+		techPass.renderToScreen = true;
 		autoMode = false;
 	}
 	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 143.99) {
 		createLineSpheres();
-		createLineSphereInner();
+		createLineSphereInner(0x87daff, sceneSphere);
 		
 		if (clearLines == false) {
 			scene.remove( scene.getObjectByName("line1") );
@@ -445,5 +449,66 @@ function render() {
 
 	if( clock.getElapsedTime() > 167.95) {
 		autoMode = true;
+	}
+
+	if ( clock.getElapsedTime() > 192) {
+		for(var i = scene2.children.length - 1; i >= 0; i--) {
+			TweenLite.to(materials[i], 5, {opacity: 0});
+		}
+		for(var i = sceneSphere.children.length - 1; i >= 0; i--) {
+			var particle = sceneSphere.children[i];
+			TweenLite.to(particle.material, 5, {opacity: 0});
+		}
+		scene.remove(orb1);
+		scene.remove(orb2);
+	}
+
+	if ( clock.getElapsedTime() > 200 && clock.getElapsedTime() < 200.4) {
+		createLineSphereInner(0x000000, sceneBlackSphere);
+	}
+
+	var bgshift1 = 0x87daff;	
+	if (clock.getElapsedTime() > 202.5 && clock.getElapsedTime() < 202.525) { renderer.setClearColor( bgshift1, 0.1); }
+	if (clock.getElapsedTime() > 202.525 && clock.getElapsedTime() < 202.55) { renderer.setClearColor( bgshift1, 0.15); }
+	if (clock.getElapsedTime() > 202.55 && clock.getElapsedTime() < 202.575) { renderer.setClearColor( bgshift1, 0.2); }
+	if (clock.getElapsedTime() > 202.575 && clock.getElapsedTime() < 202.6) { renderer.setClearColor( bgshift1, 0.25); }
+	if (clock.getElapsedTime() > 202.6 && clock.getElapsedTime() < 202.625) { renderer.setClearColor( bgshift1, 0.3); }
+	if (clock.getElapsedTime() > 202.65 && clock.getElapsedTime() < 202.675) { renderer.setClearColor( bgshift1, 0.35); }
+	if (clock.getElapsedTime() > 202.675 && clock.getElapsedTime() < 202.7) { renderer.setClearColor( bgshift1, 0.4); }
+	if (clock.getElapsedTime() > 202.7 && clock.getElapsedTime() < 202.725) { renderer.setClearColor( bgshift1, 0.45); }
+	if (clock.getElapsedTime() > 202.75 && clock.getElapsedTime() < 202.775) { renderer.setClearColor( bgshift1, 0.5); }
+	if (clock.getElapsedTime() > 202.775 && clock.getElapsedTime() < 202.8) { renderer.setClearColor( bgshift1, 0.55); }
+	if (clock.getElapsedTime() > 202.8 && clock.getElapsedTime() < 202.825) { renderer.setClearColor( bgshift1, 0.6); }
+	if (clock.getElapsedTime() > 202.825 && clock.getElapsedTime() < 202.85) { renderer.setClearColor( bgshift1, 0.65); }
+	if (clock.getElapsedTime() > 202.875 && clock.getElapsedTime() < 202.9) { renderer.setClearColor( bgshift1, 0.7); }
+	if (clock.getElapsedTime() > 202.925 && clock.getElapsedTime() < 202.95) { renderer.setClearColor( bgshift1, 0.75); }
+	if (clock.getElapsedTime() > 202.975 && clock.getElapsedTime() < 203) { renderer.setClearColor( bgshift1, 0.8); }
+	if (clock.getElapsedTime() > 203 && clock.getElapsedTime() < 203.025) { renderer.setClearColor( bgshift1, 0.85); }
+	if (clock.getElapsedTime() > 203.025 && clock.getElapsedTime() < 203.05) { renderer.setClearColor( bgshift1, 0.9); }
+	if (clock.getElapsedTime() > 203.075 && clock.getElapsedTime() < 203.1) { renderer.setClearColor( bgshift1, 0.95); }
+	if (clock.getElapsedTime() > 203.125 && clock.getElapsedTime() < 203.15) { renderer.setClearColor( bgshift1, 1); }
+
+	if(clock.getElapsedTime() > 203) {
+		for(var i = sceneBlackSphere.children.length - 1; i >= 0; i--) { 
+			var particle = sceneBlackSphere.children[i];
+			particle.scale.x = lineSphere.scale.y = lineSphere.scale.z = 0.5 + normLevel / 5;
+		}
+		for(var i = scene2.children.length - 1; i >= 0; i--) {
+			TweenLite.to(materials[i], 40, {opacity: 1});
+		}
+	}
+
+	if (clock.getElapsedTime() > 282.5 && clock.getElapsedTime() < 282.7) {
+		if(kaleido == false) {
+			composer.addPass(kaleidoPass);
+			// composer2.addPass(kaleidoPass);
+			kaleido = true;
+		}
+	}
+
+	if(clock.getElapsedTime() > 290 && clock.getElapsedTime() < 29.02) {
+		var line1 = lineCubeArray[0]
+		line1.name = "line1";
+		scene.add( line1 );
 	}
 }
