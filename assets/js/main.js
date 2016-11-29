@@ -441,7 +441,7 @@ function render() {
 		}
 	}	
 
-	if( clock.getElapsedTime() > 167.95) {
+	if( clock.getElapsedTime() > 167.95 && clock.getElapsedTime() < 170) {
 		autoMode = true;
 	}
 
@@ -453,9 +453,6 @@ function render() {
 			var particle = sceneSphere.children[i];
 			TweenLite.to(particle.material, 5, {opacity: 0});
 		}
-	}
-
-	if (clock.getElapsedTime() > 196 && clock.getElapsedTime() < 200) {
 		scene.remove(orb1);
 		scene.remove(orb2);
 	}
