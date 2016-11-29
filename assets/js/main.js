@@ -13,6 +13,7 @@ var camera, scene, scene2, sceneSphere, crossScene, renderer, composer, composer
 var orb1, orb2;
 var kaleidoPass;
 var beatCutOff = 20;
+var firstGlitch = 58.5;
 var clearLines = false;
 var kaleido = false;
 var mirrorPass;
@@ -64,7 +65,6 @@ function init() {
 	orb2 = new THREE.Object3D();
 	createJSON('assets/json/reificationorb.json', orb2, 0xffffff, -150, 100, 100);
 	createJSON('assets/json/reificationorbcentre.json', orb2, 0x000000, -150, 100, 100);
-	
 	
 	// Sprites
 	var geometry = new THREE.Geometry();
@@ -299,9 +299,6 @@ function controlCamera(speed) {
 function render() {
 	updateAudio();
 
-	// Flys orb off screen
-	// orb1.applyMatrix( new THREE.Matrix4().makeTranslation( -0.5, 0.5, -0.5 ) );
-
 	// Particles responding to audio
 	for(var i = scene2.children.length - 1; i >= 0; i--) { 
 		var particle = scene2.children[i];
@@ -315,7 +312,6 @@ function render() {
 	}
 
 	controls.update();
-
 	renderer.clear();
 	composer.render(); // Orbs, Lines - RGB Shift + Glitch
 	renderer.clearDepth();
@@ -328,7 +324,7 @@ function render() {
 	renderer.render( scene2, camera ); // Stars
 	renderer.clearDepth();
 
-	document.getElementById('clock').innerHTML = clock.getElapsedTime();
+	// document.getElementById('clock').innerHTML = clock.getElapsedTime();
 
 	if(autoMode == true) {
 		moveCamera();
@@ -336,13 +332,13 @@ function render() {
 
 	// Timed Events
 	// ------------
-	if (clock.getElapsedTime() < 1) {
+	if (clock.getElapsedTime() < 1 && clock.getElapsedTime() > 0) {
 		for(i = 0; i < 3; i++) {
 			createLineCube(i);
 		}
 	}
-	
-	if (clock.getElapsedTime() < 134) {
+
+	if (clock.getElapsedTime() < 134 && clock.getElapsedTime() > 0) {
 		orb1.rotation.x += 0.05;
 		orb1.rotation.y += 0.0002;
 
@@ -350,7 +346,7 @@ function render() {
 		orb2.rotation.y += 0.02;
 
 	}
-	if(clock.getElapsedTime() < 3) {
+	if(clock.getElapsedTime() < 3 && clock.getElapsedTime() > 0) {
 		// Setting particles to initialise as transparent
 		for(var i = scene2.children.length - 1; i >= 0; i--) {
 			materials[i].opacity = 0;
@@ -381,8 +377,6 @@ function render() {
 		line3.name = "line3";
 		scene.add( line3 );
 	}
-
-	var firstGlitch = 58.5;
 
 	if(clock.getElapsedTime() > firstGlitch && clock.getElapsedTime() < firstGlitch + 1 ||
 		clock.getElapsedTime() > firstGlitch + 4.5 && clock.getElapsedTime() < firstGlitch + 5.5 ||
@@ -451,7 +445,7 @@ function render() {
 		autoMode = true;
 	}
 
-	if ( clock.getElapsedTime() > 192) {
+	if ( clock.getElapsedTime() > 192 && clock.getElapsedTime() < 303) {
 		for(var i = scene2.children.length - 1; i >= 0; i--) {
 			TweenLite.to(materials[i], 5, {opacity: 0});
 		}
@@ -459,6 +453,9 @@ function render() {
 			var particle = sceneSphere.children[i];
 			TweenLite.to(particle.material, 5, {opacity: 0});
 		}
+	}
+
+	if (clock.getElapsedTime() > 196 && clock.getElapsedTime() < 200) {
 		scene.remove(orb1);
 		scene.remove(orb2);
 	}
@@ -467,28 +464,28 @@ function render() {
 		createLineSphereInner(0x000000, sceneBlackSphere);
 	}
 
-	var bgshift1 = 0x87daff;	
-	if (clock.getElapsedTime() > 202.5 && clock.getElapsedTime() < 202.525) { renderer.setClearColor( bgshift1, 0.1); }
-	if (clock.getElapsedTime() > 202.525 && clock.getElapsedTime() < 202.55) { renderer.setClearColor( bgshift1, 0.15); }
-	if (clock.getElapsedTime() > 202.55 && clock.getElapsedTime() < 202.575) { renderer.setClearColor( bgshift1, 0.2); }
-	if (clock.getElapsedTime() > 202.575 && clock.getElapsedTime() < 202.6) { renderer.setClearColor( bgshift1, 0.25); }
-	if (clock.getElapsedTime() > 202.6 && clock.getElapsedTime() < 202.625) { renderer.setClearColor( bgshift1, 0.3); }
-	if (clock.getElapsedTime() > 202.65 && clock.getElapsedTime() < 202.675) { renderer.setClearColor( bgshift1, 0.35); }
-	if (clock.getElapsedTime() > 202.675 && clock.getElapsedTime() < 202.7) { renderer.setClearColor( bgshift1, 0.4); }
-	if (clock.getElapsedTime() > 202.7 && clock.getElapsedTime() < 202.725) { renderer.setClearColor( bgshift1, 0.45); }
-	if (clock.getElapsedTime() > 202.75 && clock.getElapsedTime() < 202.775) { renderer.setClearColor( bgshift1, 0.5); }
-	if (clock.getElapsedTime() > 202.775 && clock.getElapsedTime() < 202.8) { renderer.setClearColor( bgshift1, 0.55); }
-	if (clock.getElapsedTime() > 202.8 && clock.getElapsedTime() < 202.825) { renderer.setClearColor( bgshift1, 0.6); }
-	if (clock.getElapsedTime() > 202.825 && clock.getElapsedTime() < 202.85) { renderer.setClearColor( bgshift1, 0.65); }
-	if (clock.getElapsedTime() > 202.875 && clock.getElapsedTime() < 202.9) { renderer.setClearColor( bgshift1, 0.7); }
-	if (clock.getElapsedTime() > 202.925 && clock.getElapsedTime() < 202.95) { renderer.setClearColor( bgshift1, 0.75); }
-	if (clock.getElapsedTime() > 202.975 && clock.getElapsedTime() < 203) { renderer.setClearColor( bgshift1, 0.8); }
-	if (clock.getElapsedTime() > 203 && clock.getElapsedTime() < 203.025) { renderer.setClearColor( bgshift1, 0.85); }
-	if (clock.getElapsedTime() > 203.025 && clock.getElapsedTime() < 203.05) { renderer.setClearColor( bgshift1, 0.9); }
-	if (clock.getElapsedTime() > 203.075 && clock.getElapsedTime() < 203.1) { renderer.setClearColor( bgshift1, 0.95); }
-	if (clock.getElapsedTime() > 203.125 && clock.getElapsedTime() < 203.15) { renderer.setClearColor( bgshift1, 1); }
+	var bgshift = 0x87daff;	
+	if (clock.getElapsedTime() > 202.5 && clock.getElapsedTime() < 202.525) { renderer.setClearColor( bgshift, 0.1); }
+	if (clock.getElapsedTime() > 202.525 && clock.getElapsedTime() < 202.55) { renderer.setClearColor( bgshift, 0.15); }
+	if (clock.getElapsedTime() > 202.55 && clock.getElapsedTime() < 202.575) { renderer.setClearColor( bgshift, 0.2); }
+	if (clock.getElapsedTime() > 202.575 && clock.getElapsedTime() < 202.6) { renderer.setClearColor( bgshift, 0.25); }
+	if (clock.getElapsedTime() > 202.6 && clock.getElapsedTime() < 202.625) { renderer.setClearColor( bgshift, 0.3); }
+	if (clock.getElapsedTime() > 202.65 && clock.getElapsedTime() < 202.675) { renderer.setClearColor( bgshift, 0.35); }
+	if (clock.getElapsedTime() > 202.675 && clock.getElapsedTime() < 202.7) { renderer.setClearColor( bgshift, 0.4); }
+	if (clock.getElapsedTime() > 202.7 && clock.getElapsedTime() < 202.725) { renderer.setClearColor( bgshift, 0.45); }
+	if (clock.getElapsedTime() > 202.75 && clock.getElapsedTime() < 202.775) { renderer.setClearColor( bgshift, 0.5); }
+	if (clock.getElapsedTime() > 202.775 && clock.getElapsedTime() < 202.8) { renderer.setClearColor( bgshift, 0.55); }
+	if (clock.getElapsedTime() > 202.8 && clock.getElapsedTime() < 202.825) { renderer.setClearColor( bgshift, 0.6); }
+	if (clock.getElapsedTime() > 202.825 && clock.getElapsedTime() < 202.85) { renderer.setClearColor( bgshift, 0.65); }
+	if (clock.getElapsedTime() > 202.875 && clock.getElapsedTime() < 202.9) { renderer.setClearColor( bgshift, 0.7); }
+	if (clock.getElapsedTime() > 202.925 && clock.getElapsedTime() < 202.95) { renderer.setClearColor( bgshift, 0.75); }
+	if (clock.getElapsedTime() > 202.975 && clock.getElapsedTime() < 203) { renderer.setClearColor( bgshift, 0.8); }
+	if (clock.getElapsedTime() > 203 && clock.getElapsedTime() < 203.025) { renderer.setClearColor( bgshift, 0.85); }
+	if (clock.getElapsedTime() > 203.025 && clock.getElapsedTime() < 203.05) { renderer.setClearColor( bgshift, 0.9); }
+	if (clock.getElapsedTime() > 203.075 && clock.getElapsedTime() < 203.1) { renderer.setClearColor( bgshift, 0.95); }
+	if (clock.getElapsedTime() > 203.125 && clock.getElapsedTime() < 203.15) { renderer.setClearColor( bgshift, 1); }
 
-	if(clock.getElapsedTime() > 203) {
+	if(clock.getElapsedTime() > 203 && clock.getElapsedTime() < 303) {
 		for(var i = sceneBlackSphere.children.length - 1; i >= 0; i--) { 
 			var particle = sceneBlackSphere.children[i];
 			particle.scale.x = lineSphere.scale.y = lineSphere.scale.z = 0.5 + normLevel / 5;
@@ -501,14 +498,41 @@ function render() {
 	if (clock.getElapsedTime() > 282.5 && clock.getElapsedTime() < 282.7) {
 		if(kaleido == false) {
 			composer.addPass(kaleidoPass);
-			// composer2.addPass(kaleidoPass);
 			kaleido = true;
 		}
 	}
 
-	if(clock.getElapsedTime() > 290 && clock.getElapsedTime() < 29.02) {
-		var line1 = lineCubeArray[0]
-		line1.name = "line1";
-		scene.add( line1 );
+	if(clock.getElapsedTime() > 307) {
+		for(var i = scene2.children.length - 1; i >= 0; i--) {
+			TweenLite.to(materials[i], 5, {opacity: 1});
+		}
+		for(var i = sceneSphere.children.length - 1; i >= 0; i--) {
+			var particle = sceneSphere.children[i];
+			TweenLite.to(particle.material, 5, {opacity: 1});
+		}
+		for(var i = sceneBlackSphere.children.length - 1; i >= 0; i--) {
+			var particle = sceneBlackSphere.children[i];
+			TweenLite.to(particle.material, 5, {opacity: 0});
+		}
 	}
+
+	if (clock.getElapsedTime() > 307.5 && clock.getElapsedTime() < 307.525) { renderer.setClearColor( bgshift, 1); }
+	if (clock.getElapsedTime() > 307.525 && clock.getElapsedTime() < 307.55) { renderer.setClearColor( bgshift, 0.95); }
+	if (clock.getElapsedTime() > 307.55 && clock.getElapsedTime() < 307.575) { renderer.setClearColor( bgshift, 0.9); }
+	if (clock.getElapsedTime() > 307.575 && clock.getElapsedTime() < 307.6) { renderer.setClearColor( bgshift, 0.85); }
+	if (clock.getElapsedTime() > 307.6 && clock.getElapsedTime() < 307.625) { renderer.setClearColor( bgshift, 0.8); }
+	if (clock.getElapsedTime() > 307.65 && clock.getElapsedTime() < 307.675) { renderer.setClearColor( bgshift, 0.75); }
+	if (clock.getElapsedTime() > 307.675 && clock.getElapsedTime() < 307.7) { renderer.setClearColor( bgshift, 0.7); }
+	if (clock.getElapsedTime() > 307.7 && clock.getElapsedTime() < 307.725) { renderer.setClearColor( bgshift, 0.65); }
+	if (clock.getElapsedTime() > 307.75 && clock.getElapsedTime() < 307.775) { renderer.setClearColor( bgshift, 0.6); }
+	if (clock.getElapsedTime() > 307.775 && clock.getElapsedTime() < 307.8) { renderer.setClearColor( bgshift, 0.55); }
+	if (clock.getElapsedTime() > 307.8 && clock.getElapsedTime() < 307.825) { renderer.setClearColor( bgshift, 0.5); }
+	if (clock.getElapsedTime() > 307.825 && clock.getElapsedTime() < 307.85) { renderer.setClearColor( bgshift, 0.45); }
+	if (clock.getElapsedTime() > 307.875 && clock.getElapsedTime() < 307.9) { renderer.setClearColor( bgshift, 0.4); }
+	if (clock.getElapsedTime() > 307.925 && clock.getElapsedTime() < 307.95) { renderer.setClearColor( bgshift, 0.35); }
+	if (clock.getElapsedTime() > 307.975 && clock.getElapsedTime() < 308) { renderer.setClearColor( bgshift, 0.3); }
+	if (clock.getElapsedTime() > 308 && clock.getElapsedTime() < 308.025) { renderer.setClearColor( bgshift, 0.25); }
+	if (clock.getElapsedTime() > 308.025 && clock.getElapsedTime() < 308.05) { renderer.setClearColor( bgshift, 0.2); }
+	if (clock.getElapsedTime() > 308.075 && clock.getElapsedTime() < 308.1) { renderer.setClearColor( bgshift, 0.15); }
+	if (clock.getElapsedTime() > 308.125 && clock.getElapsedTime() < 308.15) { renderer.setClearColor( bgshift, 0); }
 }

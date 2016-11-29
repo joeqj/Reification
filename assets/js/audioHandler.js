@@ -53,6 +53,10 @@ function finishLoad() {
 	    setTimeout(function() {
 		  $(".intro").remove();
 		}, 3000);
+		setTimeout(function() {
+			document.getElementById('prompt').innerHTML = 'Double click to toggle auto // Drag to explore';
+			document.getElementById('album').innerHTML = '<a href="https://mutualismuk.bandcamp.com/" target="blank">Thought Process // Joe QJ';
+		},500);
 	});
 }
 
@@ -73,17 +77,10 @@ function initAudio(data) {
 }
 
 function createAudio() {
-	//processor = audioContext.createJavaScriptNode(2048 , 1 , 1 );
-
 	analyser = audioContext.createAnalyser();
 	analyser.smoothingTimeConstant = 0.1;
-
 	source.connect(audioContext.destination);
 	source.connect(analyser);
-
-	//analyser.connect(processor);
-	//processor.connect(audioContext.destination);
-	
 }
 
 function startViz(){
