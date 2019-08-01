@@ -43,6 +43,8 @@ function init() {
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.autoClear = false;
 	document.body.appendChild( renderer.domElement );
+	
+	console.log("Persist");
 
 	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
 	camera.position.z = 500;
@@ -416,10 +418,12 @@ function render() {
 		orb1.rotation.y += 0.0002;
 		orb2.rotation.x += 0;
 		orb2.rotation.y += 0.02;
+		console.log("I ");
 	}
 	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 167.94 ) {
 		techPass.renderToScreen = true;
 		autoMode = false;
+		console.log("love ");
 	}
 	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 143.99) {
 		createLineSpheres();
@@ -431,6 +435,8 @@ function render() {
 	    	scene.remove( scene.getObjectByName("line3") );
 	    	clearLines = true;
 		}
+		
+		console.log("her ");
 	}
 
 	// Add beat detection to line sphere

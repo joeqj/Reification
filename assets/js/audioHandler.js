@@ -55,7 +55,8 @@ function finishLoad() {
 		}, 3000);
 		setTimeout(function() {
 			document.getElementById('prompt').innerHTML = 'Double click to toggle auto // Drag to explore';
-			document.getElementById('album').innerHTML = '<a href="https://mutualismuk.bandcamp.com/" target="blank">Thought Process // Joe QJ';
+			document.getElementById('clock').innerHTML = '<a href="http://mutualism.uk" target="blank">Mutualism</a>';
+			document.getElementById('album').innerHTML = '<a href="https://mutualismuk.bandcamp.com/" target="blank">Thought Process</a> // <a href="https://github.com/joeqj" target="blank">Joe QJ</a>';
 		},500);
 	});
 }

@@ -18,8 +18,20 @@ label, input {
 }
 #clock {
 	position: absolute;
-	bottom: 20px; left: 20px;
+	bottom: 5px; left: 0;
 	width: 100px;
+}
+#clock a {
+	color: #fff;
+	text-decoration: none;
+	-webkit-transition: color 150ms ease-in-out;
+	-moz-transition: color 150ms ease-in-out;
+	-ms-transition: color 150ms ease-in-out;
+	-o-transition: color 150ms ease-in-out;
+	transition: color 150ms ease-in-out;
+}
+#clock a:hover {
+	color: #656565;
 }
 #album {
 	position: absolute;
@@ -38,7 +50,6 @@ label, input {
 }
 #album a:hover {
 	color: #656565;
-	
 }
 .intro {
 	background: #101618;
@@ -46,10 +57,12 @@ label, input {
 	width: 100%;
 	position: relative;
 	z-index: 9999;
+        cursor: auto;
 }
 @media screen and (max-width: 768px) {
   .intro .text { width: 300px !important }
   .intro .play { width: 300px !important; left: 0 !important }
+  .intro .warning { width: 300px !important; left: 0 !important }
 }
 .intro .text {
 	margin: auto;
@@ -93,6 +106,16 @@ label, input {
 	right: 0;
 	margin: 0 auto;
 	text-decoration: none;
+	text-align: center;
+}
+.warning {
+	color: #b3b3b3;
+	position: absolute;
+	width: 500px;
+	bottom: 120px;
+	left: -40px;
+	right: 0;
+	margin: 0 auto;
 	text-align: center;
 }
 .intro .loading {
