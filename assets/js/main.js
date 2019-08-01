@@ -43,7 +43,7 @@ function init() {
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.autoClear = false;
 	document.body.appendChild( renderer.domElement );
-	
+
 	console.log("Persist");
 
 	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
@@ -67,7 +67,7 @@ function init() {
 	orb2 = new THREE.Object3D();
 	createJSON('assets/json/reificationorb.json', orb2, 0xffffff, -150, 100, 100);
 	createJSON('assets/json/reificationorbcentre.json', orb2, 0x000000, -150, 100, 100);
-	
+
 	// Sprites
 	var geometry = new THREE.Geometry();
 	for ( i = 0; i < 200; i ++ ) {
@@ -135,16 +135,16 @@ function createJSON(json, name, colour, posx, posy, posz) {
         mesh.position.y = posy;
         mesh.position.z = posz;
         name.add( mesh );
-	}); 
+	});
 };
 
 function createLineCube(index) {
 	colourFuck = 2.5;
 	increment = 0.5
 	var geometry = new THREE.Geometry(),
-		points = hilbert3D( 
-			new THREE.Vector3( 0,0,0 ), 200.0, 2, 0, 1, 
-			Math.floor(Math.random() * 7) + 1, 2, 4, 
+		points = hilbert3D(
+			new THREE.Vector3( 0,0,0 ), 200.0, 2, 0, 1,
+			Math.floor(Math.random() * 7) + 1, 2, 4,
 			Math.floor(Math.random() * 7) + 1, 6, 7 ),
 		colors = [];
 	for (i = 0; i < points.length; i ++) {
@@ -171,13 +171,13 @@ function createLineCube(index) {
 
 function createLineSpheres() {
 	var i, vertex1, vertex2, material, p,
-		parameters = [ 
-			[ 1.2, 0x8e87ff, 0.5, 1 ], 
-			[ 1.25, 0x000833, 0.8, 1 ], 
-			[ 3.0, 0xaaaaaa, 0.75, 2 ], 
-			[ 3.5, 0xffffff, 0.5, 1 ], 
-			[ 4.5, 0xffffff, 0.25, 1 ], 
-			[ 5.5, 0xffffff, 0.125, 1 ] 
+		parameters = [
+			[ 1.2, 0x8e87ff, 0.5, 1 ],
+			[ 1.25, 0x000833, 0.8, 1 ],
+			[ 3.0, 0xaaaaaa, 0.75, 2 ],
+			[ 3.5, 0xffffff, 0.5, 1 ],
+			[ 4.5, 0xffffff, 0.25, 1 ],
+			[ 5.5, 0xffffff, 0.125, 1 ]
 		];
 	var geometry = createGeometry();
 	for( i = 0; i < parameters.length; ++ i ) {
@@ -302,7 +302,7 @@ function render() {
 	updateAudio();
 
 	// Particles responding to audio
-	for(var i = scene2.children.length - 1; i >= 0; i--) { 
+	for(var i = scene2.children.length - 1; i >= 0; i--) {
 		var particle = scene2.children[i];
 		particle.position.x = normLevel * 100;
 		particle.position.y = normLevel * 100;
@@ -346,7 +346,6 @@ function render() {
 
 		orb2.rotation.x += 0.01;
 		orb2.rotation.y += 0.02;
-
 	}
 	if(clock.getElapsedTime() < 3 && clock.getElapsedTime() > 0) {
 		// Setting particles to initialise as transparent
@@ -361,7 +360,7 @@ function render() {
 			TweenLite.to(materials[i], 120, {opacity: 1.5 + 0.5*Math.sin(new Date().getTime() * .0025)});
 		}
 	}
-	
+
 	if(clock.getElapsedTime() > 48 && clock.getElapsedTime() < 48.02) {
 		var line1 = lineCubeArray[0]
 		line1.name = "line1";
@@ -398,13 +397,13 @@ function render() {
 		orb2.rotation.x += 0.008;
 		orb2.rotation.y += 0.02;
 	}
-	if(clock.getElapsedTime() > 136 && clock.getElapsedTime() < 138 ) { 
+	if(clock.getElapsedTime() > 136 && clock.getElapsedTime() < 138 ) {
 		orb1.rotation.x += 0.03;
 		orb1.rotation.y += 0.0002;
 		orb2.rotation.x += 0.006;
 		orb2.rotation.y += 0.02;
 	}
-	if(clock.getElapsedTime() > 138 && clock.getElapsedTime() < 142 ) { 
+	if(clock.getElapsedTime() > 138 && clock.getElapsedTime() < 142 ) {
 		orb1.rotation.x += 0.02;
 		orb1.rotation.y += 0.0002;
 		orb2.rotation.x += 0.004;
@@ -428,24 +427,24 @@ function render() {
 	if(clock.getElapsedTime() > 143.9 && clock.getElapsedTime() < 143.99) {
 		createLineSpheres();
 		createLineSphereInner(0x87daff, sceneSphere);
-		
+
 		if (clearLines == false) {
 			scene.remove( scene.getObjectByName("line1") );
 	    	scene.remove( scene.getObjectByName("line2") );
 	    	scene.remove( scene.getObjectByName("line3") );
 	    	clearLines = true;
 		}
-		
+
 		console.log("her ");
 	}
 
 	// Add beat detection to line sphere
 	if(clock.getElapsedTime() > 161) {
-		for(var i = sceneSphere.children.length - 1; i >= 0; i--) { 
+		for(var i = sceneSphere.children.length - 1; i >= 0; i--) {
 			var particle = sceneSphere.children[i];
 			particle.scale.x = lineSphere.scale.y = lineSphere.scale.z = 0.5 + normLevel / 5;
 		}
-	}	
+	}
 
 	if( clock.getElapsedTime() > 167.95 && clock.getElapsedTime() < 170) {
 		autoMode = true;
@@ -467,7 +466,7 @@ function render() {
 		createLineSphereInner(0x000000, sceneBlackSphere);
 	}
 
-	var bgshift = 0x87daff;	
+	var bgshift = 0x87daff;
 	if (clock.getElapsedTime() > 202.5 && clock.getElapsedTime() < 202.525) { renderer.setClearColor( bgshift, 0.1); }
 	if (clock.getElapsedTime() > 202.525 && clock.getElapsedTime() < 202.55) { renderer.setClearColor( bgshift, 0.15); }
 	if (clock.getElapsedTime() > 202.55 && clock.getElapsedTime() < 202.575) { renderer.setClearColor( bgshift, 0.2); }
@@ -489,7 +488,7 @@ function render() {
 	if (clock.getElapsedTime() > 203.125 && clock.getElapsedTime() < 203.15) { renderer.setClearColor( bgshift, 1); }
 
 	if(clock.getElapsedTime() > 203 && clock.getElapsedTime() < 303) {
-		for(var i = sceneBlackSphere.children.length - 1; i >= 0; i--) { 
+		for(var i = sceneBlackSphere.children.length - 1; i >= 0; i--) {
 			var particle = sceneBlackSphere.children[i];
 			particle.scale.x = lineSphere.scale.y = lineSphere.scale.z = 0.5 + normLevel / 5;
 		}
