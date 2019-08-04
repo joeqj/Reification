@@ -6,6 +6,14 @@
     font-weight: bold;
     font-style: normal;
 }
+@font-face {
+    font-family: 'Antar';
+    src: url('/assets/font/Antar.ttf') format('ttf'),
+				url('/assets/font/Antar.woff2') format('woff2'),
+        url('/assets/font/Antar.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
 * {
 	margin: 0;
 	padding: 0;
@@ -70,6 +78,9 @@ h1 {
 #album a:hover {
 	color: #656565;
 }
+#prompt {
+	position: absolute;
+}
 .intro {
 	background: rgba(0,0,0,0.5);
 	height: 100vh;
@@ -111,37 +122,40 @@ h1 {
 	text-decoration: none;
 }
 .intro .play {
-	color: #eee;
+	background: white;
+	color: black;
 	position: absolute;
 	width: 200px;
-	bottom: 40px;
-	right: 80px;
-	margin: 0;
+	bottom: 98px;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
 	padding: 2px 0 10px;
 	text-decoration: none;
 	text-align: center;
 	font-family: "Plateia", sans-serif;
+	text-transform: uppercase;
 	font-size: 24px;
 	display: inline-block;
-	border-radius: 10px;
-	-webkit-border-radius: 10px;
+	border-radius: 500px;
+	-webkit-border-radius: 500px;
 	-webkit-transition: all 250ms ease-in-out;
--moz-transition: all 250ms ease-in-out;
--ms-transition: all 250ms ease-in-out;
--o-transition: all 250ms ease-in-out;
-transition: all 250ms ease-in-out;
+	-moz-transition: all 250ms ease-in-out;
+	-ms-transition: all 250ms ease-in-out;
+	-o-transition: all 250ms ease-in-out;
+	transition: all 250ms ease-in-out;
 }
 .intro .play.glow {
-	-webkit-box-shadow: 0px 0px 25px 3px rgba(255,255,255,1);
-	-moz-box-shadow: 0px 0px 25px 3px rgba(255,255,255,1);
-	box-shadow: 0px 0px 25px 3px rgba(255,255,255,1);
-}
-.intro .play.glow:hover {
 	-webkit-box-shadow: 0px 0px 25px 3px rgba(133,133,133,1);
 	-moz-box-shadow: 0px 0px 25px 3px rgba(133,133,133,1);
 	box-shadow: 0px 0px 25px 3px rgba(133,133,133,1);
-	background: white;
-	color: black;
+}
+.intro .play.glow:hover {
+	-webkit-box-shadow: 0px 0px 25px 3px rgba(255,255,255,1);
+	-moz-box-shadow: 0px 0px 25px 3px rgba(255,255,255,1);
+	box-shadow: 0px 0px 25px 3px rgba(255,255,255,1);
+	background: black;
+	color: white;
 }
 .intro .loading {
 	color: #b3b3b3;
@@ -187,4 +201,18 @@ transition: color 250ms ease-in-out;
 }
 .intro .topbar .column:nth-child(3) {
 	text-align: right;
+}
+.tp-logo {
+	font-family: 'Antar', sans-serif;
+	font-size: 10rem;
+	letter-spacing: -14px;
+	line-height: 0.65;
+	text-shadow: 0 0 5px rgba(255, 255, 255, 0.35), 0 0 10px rgba(255, 255, 255, 0.35), 0 0 15px rgba(255, 255, 255, 0.35), 0 0 20px rgba(43,217,207,0.22), 0 0 30px rgba(43,217,207,0.12);
+}
+.tp-logo-wrap {
+	position: absolute;
+	left: -80px;
+	right: 0;
+	bottom: 80px;
+	margin: 80px auto 0;
 }
