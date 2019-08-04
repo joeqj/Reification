@@ -1,16 +1,16 @@
 @font-face {
     font-family: 'Plateia';
-    src: url('/assets/font/Plateia-Bold.ttf') format('ttf'),
-				url('/assets/font/Plateia-Bold.woff2') format('woff2'),
-        url('/assets/font/Plateia-Bold.woff') format('woff');
+    src: url('../font/Plateia-Bold.ttf') format('ttf'),
+				url('../font/Plateia-Bold.woff2') format('woff2'),
+        url('../font/Plateia-Bold.woff') format('woff');
     font-weight: bold;
     font-style: normal;
 }
 @font-face {
     font-family: 'Antar';
-    src: url('/assets/font/Antar.ttf') format('ttf'),
-				url('/assets/font/Antar.woff2') format('woff2'),
-        url('/assets/font/Antar.woff') format('woff');
+    src: url('../font/Antar.ttf') format('ttf'),
+				url('../font/Antar.woff2') format('woff2'),
+        url('../font/Antar.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
