@@ -542,7 +542,7 @@ function render() {
 // Off grid intro page amends
 var definitions = {
 	// https://www.thirteen.org/edonline/concept2class/constructivism/index.html
-	constructive: "<p>Constructivism is basically a theory -- based on observation and scientific study -- about how people learn. It says that people construct their own understanding and knowledge of the world, through experiencing things and reflecting on those experiences. When we encounter something new, we have to reconcile it with our previous ideas and experience, maybe changing what we believe, or maybe discarding the new information as irrelevant. In any case, we are active creators of our own knowledge. To do this, we must ask questions, explore, and assess what we know.</p>",
+	constructive: '<p>Constructivism is basically a theory -- based on <span class="morehoverlink" id="observation">observation</span> and scientific study -- about how people learn. It says that people construct their own understanding and knowledge of the world, through experiencing things and reflecting on those experiences. When we encounter something new, we have to reconcile it with our previous ideas and experience, maybe changing what we believe, or maybe discarding the new information as irrelevant. In any case, we are active creators of our own knowledge. To do this, we must ask questions, explore, and assess what we know.</p>',
 	// https://en.wikipedia.org/wiki/Perception
 	perception: "<p>Perception (from the Latin perceptio) is the organization, identification, and interpretation of sensory information in order to represent and understand the presented information, or the environment.</p>",
 	// https://en.wikipedia.org/wiki/Experience
@@ -551,6 +551,50 @@ var definitions = {
 	sensory: "<p>Sensory Information are things that the brain collects from your senses that give you information about the world around you. The five basic senses are taste, sight, smell, hearing, and touch. Sensory information is collected from sensory receptors that are located throughout your body (such as photoreceptor cells in your eyes for vision and taste receptor cells on your tongue for taste) and then sent to the brain where it is processed.</p>"
 }
 
-$(".hoverlink").hover(function() {
+var furtherdefinitions = {
+	observation: '<p>Observation is one method for collecting research data. It involves watching a participant and recording relevant behavior for later analysis. One example of a study using the observational method would be when a researcher wants to study how children manage sharing of toys. He could observe a group of children playing in the classroom, and record what things they say or do that determine who gets to play with a coveted toy.</p>'
+}
+
+var hov = 0;
+var morehov = 0;
+
+$(document).on("mouseenter", ".hoverlink", function() {
+	hov = 1;
+	clearTimeout();
 	$("#moreinfo").html(definitions[this.id]);
+}),
+$(document).on("mouseleave", ".hoverlink", function() {
+	hov = 0;
+	setTimeout(function() {
+		if(hov == 0){
+			$("#moreinfo").html("");
+		}
+	}, 2000);
+}),
+$(document).on("mouseenter", "#moreinfo", function() {
+	hov = 1;
+	clearTimeout();
+}),
+$(document).on("mouseleave", "#moreinfo", function() {
+	hov = 0;
+	setTimeout(function() {
+		if(hov == 0){
+			$("#moreinfo").html("");
+		}
+	}, 2000);
+}),
+$(document).on("mouseenter", ".morehoverlink", function() {
+	$(".tp-logo-wrap").hide();
+	morehov = 1;
+	clearTimeout();
+	$("#furtherinfo").html(furtherdefinitions[this.id]);
+}),
+$(document).on("mouseleave", ".morehoverlink", function() {
+	morehov = 0;
+	setTimeout(function() {
+		if(morehov == 0){
+			$(".tp-logo-wrap").show();
+			$("#furtherinfo").html("");
+		}
+	}, 1500);
 });

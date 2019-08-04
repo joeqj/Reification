@@ -31,7 +31,6 @@ function loadAudioBuffer(url) {
 
 	request.onload = function() {
 
-
 		audioContext.decodeAudioData(request.response, function(buffer) {
 				audioBuffer = buffer;
 				finishLoad();

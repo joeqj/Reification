@@ -92,11 +92,6 @@ h1 {
 	top: -10px;
 	padding-right: 40px;
 }
-@media screen and (max-width: 768px) {
-  .intro .text { width: 300px !important }
-  .intro .play { width: 300px !important; left: 0 !important }
-  .intro .warning { width: 300px !important; left: 0 !important }
-}
 .intro .text {
   	text-align: left;
 }
@@ -120,6 +115,49 @@ h1 {
 .intro .text .wiki:hover {
 	color: #656565;
 	text-decoration: none;
+}
+.row {
+	position: relative;
+	display: flex;
+	width: 96%;
+}
+.column {
+  flex: 1;
+	width: 80%;
+}
+.row.main {
+	margin-top: 40px;
+}
+.row.main .column {
+	padding-right: 40px;
+}
+.row.main p span {
+	cursor: pointer;
+	text-decoration: underline;
+	-webkit-transition: color 250ms ease-in-out;
+	-moz-transition: color 250ms ease-in-out;
+	-ms-transition: color 250ms ease-in-out;
+	-o-transition: color 250ms ease-in-out;
+	transition: color 250ms ease-in-out;
+	display: inline-block;
+}
+.row.main p span:hover {
+	color: #fff;
+}
+.intro .topbar h1,
+.intro .topbar p {
+	margin: 0;
+	font-size: 2.4rem;
+	text-transform: uppercase;
+}
+.intro .topbar .column:nth-child(1) {
+	text-align: left;
+}
+.intro .topbar .column:nth-child(2) {
+	text-align: center;
+}
+.intro .topbar .column:nth-child(3) {
+	text-align: right;
 }
 .intro .play {
 	background: white;
@@ -160,48 +198,6 @@ h1 {
 .intro .loading {
 	color: #b3b3b3;
 }
-.row {
-	position: relative;
-	display: flex;
-	width: 96%;
-}
-.column {
-  flex: 1;
-	width: 80%;
-}
-.row.main {
-	margin-top: 40px;
-}
-.row.main .column {
-	padding-right: 40px;
-}
-.row.main p span {
-	cursor: pointer;
-	text-decoration: underline;
-	-webkit-transition: color 250ms ease-in-out;
--moz-transition: color 250ms ease-in-out;
--ms-transition: color 250ms ease-in-out;
--o-transition: color 250ms ease-in-out;
-transition: color 250ms ease-in-out;
-}
-.row.main p span:hover {
-	color: #fff;
-}
-.intro .topbar h1,
-.intro .topbar p {
-	margin: 0;
-	font-size: 2.4rem;
-	text-transform: uppercase;
-}
-.intro .topbar .column:nth-child(1) {
-	text-align: left;
-}
-.intro .topbar .column:nth-child(2) {
-	text-align: center;
-}
-.intro .topbar .column:nth-child(3) {
-	text-align: right;
-}
 .tp-logo {
 	font-family: 'Antar', sans-serif;
 	font-size: 10rem;
@@ -215,4 +211,34 @@ transition: color 250ms ease-in-out;
 	right: 0;
 	bottom: 80px;
 	margin: 80px auto 0;
+}
+
+@media screen and (max-width: 768px) {
+	.topbar {
+		width: 94%;
+	}
+	.row.main {
+		display: none;
+	}
+	.topbar p, .topbar h1 {
+		font-size: 1.3rem !important;
+	}
+	.tp-logo-wrap {
+		left: -51px;
+		bottom: 140px;
+	}
+	.tp-logo {
+		font-size: 5.5rem;
+		left: 40px;
+	}
+	.intro .play {
+		bottom: -100px;
+	}
+}
+
+@media only screen and (max-width: 320px) {
+	.tp-logo {
+		font-size: 4.8rem;
+		left: 40px;
+	}
 }
