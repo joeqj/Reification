@@ -30,7 +30,7 @@ function loadAudioBuffer(url) {
 	request.responseType = "arraybuffer";
 
 	request.onload = function() {
-		
+
 
 		audioContext.decodeAudioData(request.response, function(buffer) {
 				audioBuffer = buffer;
@@ -45,7 +45,9 @@ function loadAudioBuffer(url) {
 }
 
 function finishLoad() {
-	document.getElementById('load').innerHTML = 'Play';
+	var playbtn = $("#load");
+	playbtn.text('Play');
+	playbtn.addClass("glow");
 	$(".play").click(function(e){
 	    e.preventDefault();
 	    $(".intro").fadeOut();
@@ -92,6 +94,6 @@ function startViz(){
 	freqByteData = new Uint8Array(analyser.frequencyBinCount);
 	levels = [];
 	isPlayingAudio = true;
-	
+
 	clock.start();
 }

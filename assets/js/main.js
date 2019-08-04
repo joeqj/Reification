@@ -538,3 +538,19 @@ function render() {
 	if (clock.getElapsedTime() > 308.075 && clock.getElapsedTime() < 308.1) { renderer.setClearColor( bgshift, 0.15); }
 	if (clock.getElapsedTime() > 308.125 && clock.getElapsedTime() < 308.15) { renderer.setClearColor( bgshift, 0); }
 }
+
+// Off grid intro page amends
+var definitions = {
+	// https://www.thirteen.org/edonline/concept2class/constructivism/index.html
+	constructive: "<p>Constructivism is basically a theory -- based on observation and scientific study -- about how people learn. It says that people construct their own understanding and knowledge of the world, through experiencing things and reflecting on those experiences. When we encounter something new, we have to reconcile it with our previous ideas and experience, maybe changing what we believe, or maybe discarding the new information as irrelevant. In any case, we are active creators of our own knowledge. To do this, we must ask questions, explore, and assess what we know.</p>",
+	// https://en.wikipedia.org/wiki/Perception
+	perception: "<p>Perception (from the Latin perceptio) is the organization, identification, and interpretation of sensory information in order to represent and understand the presented information, or the environment.</p>",
+	// https://en.wikipedia.org/wiki/Experience
+	experience: "<p>Experience is the knowledge or mastery of an event or subject gained through involvement in or exposure to it.[1] Terms in philosophy such as 'empirical knowledge' or 'a posteriori knowledge' are used to refer to knowledge based on experience. A person with considerable experience in a specific field can gain a reputation as an expert. The concept of experience generally refers to know-how or procedural knowledge, rather than propositional knowledge: on-the-job training rather than book-learning.</p>",
+	// https://www.alleydog.com/glossary/definition.php?term=Sensory+Information
+	sensory: "<p>Sensory Information are things that the brain collects from your senses that give you information about the world around you. The five basic senses are taste, sight, smell, hearing, and touch. Sensory information is collected from sensory receptors that are located throughout your body (such as photoreceptor cells in your eyes for vision and taste receptor cells on your tongue for taste) and then sent to the brain where it is processed.</p>"
+}
+
+$(".hoverlink").hover(function() {
+	$("#moreinfo").html(definitions[this.id]);
+});
