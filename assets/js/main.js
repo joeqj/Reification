@@ -542,7 +542,7 @@ function render() {
 // Off grid intro page amends
 var definitions = {
 	// https://www.thirteen.org/edonline/concept2class/constructivism/index.html
-	constructive: '<p>Constructivism is basically a theory -- based on <span class="morehoverlink" id="observation">observation</span> and scientific study -- about how people learn. It says that people construct their own understanding and knowledge of the world, through <span class="morehoverlink" id="experience">experiencing</span> things and reflecting on those experiences. When we encounter something new, we have to reconcile it with our previous ideas and experience, maybe changing what we believe, or maybe discarding the new information as irrelevant. In any case, we are active creators of our own knowledge. To do this, we must ask questions, explore, and assess what we know.</p>',
+	constructive: '<p>Constructivism as a paradigm or worldview posits that learning is an active, constructive process based on <span class="morehoverlink" id="observation">observation.</span> The learner is an information constructor. People actively construct or create their own subjective representations of objective reality.</p>',
 	// https://en.wikipedia.org/wiki/Perception
 	perception: '<p>The process by which the nature and meaning of sensory stimuli are recognized and <span class="morehoverlink" id="interpretation">interpreted.</span></p>',
 	// https://en.wikipedia.org/wiki/Experience
