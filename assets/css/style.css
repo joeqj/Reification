@@ -209,8 +209,12 @@ h1 {
 	position: absolute;
 	left: -80px;
 	right: 0;
-	bottom: 80px;
+	bottom: 60px;
 	margin: 80px auto 0;
+}
+
+#moreinfo {
+  margin-top: 20px;
 }
 
 @media screen and (max-width: 768px) {

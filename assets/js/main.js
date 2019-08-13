@@ -542,17 +542,21 @@ function render() {
 // Off grid intro page amends
 var definitions = {
 	// https://www.thirteen.org/edonline/concept2class/constructivism/index.html
-	constructive: '<p>Constructivism is basically a theory -- based on <span class="morehoverlink" id="observation">observation</span> and scientific study -- about how people learn. It says that people construct their own understanding and knowledge of the world, through experiencing things and reflecting on those experiences. When we encounter something new, we have to reconcile it with our previous ideas and experience, maybe changing what we believe, or maybe discarding the new information as irrelevant. In any case, we are active creators of our own knowledge. To do this, we must ask questions, explore, and assess what we know.</p>',
+	constructive: '<p>Constructivism is basically a theory -- based on <span class="morehoverlink" id="observation">observation</span> and scientific study -- about how people learn. It says that people construct their own understanding and knowledge of the world, through <span class="morehoverlink" id="experience">experiencing</span> things and reflecting on those experiences. When we encounter something new, we have to reconcile it with our previous ideas and experience, maybe changing what we believe, or maybe discarding the new information as irrelevant. In any case, we are active creators of our own knowledge. To do this, we must ask questions, explore, and assess what we know.</p>',
 	// https://en.wikipedia.org/wiki/Perception
-	perception: "<p>Perception (from the Latin perceptio) is the organization, identification, and interpretation of sensory information in order to represent and understand the presented information, or the environment.</p>",
+	perception: '<p>The process by which the nature and meaning of sensory stimuli are recognized and <span class="morehoverlink" id="interpretation">interpreted.</span></p>',
 	// https://en.wikipedia.org/wiki/Experience
-	experience: "<p>Experience is the knowledge or mastery of an event or subject gained through involvement in or exposure to it.[1] Terms in philosophy such as 'empirical knowledge' or 'a posteriori knowledge' are used to refer to knowledge based on experience. A person with considerable experience in a specific field can gain a reputation as an expert. The concept of experience generally refers to know-how or procedural knowledge, rather than propositional knowledge: on-the-job training rather than book-learning.</p>",
+	experience: '<p>The wisdom derived from the changes and trials of life, this is typically produced by an event - whether witnessed or <span class="morehoverlink" id="participation">participated</span> in. A person with considerable experience in a specific field can gain reputation or perception to be an expert.</p>',
 	// https://www.alleydog.com/glossary/definition.php?term=Sensory+Information
-	sensory: "<p>Sensory Information are things that the brain collects from your senses that give you information about the world around you. The five basic senses are taste, sight, smell, hearing, and touch. Sensory information is collected from sensory receptors that are located throughout your body (such as photoreceptor cells in your eyes for vision and taste receptor cells on your tongue for taste) and then sent to the brain where it is processed.</p>"
+	sensory: '<p>Processes and structures within an organism that receive stimuli from the environment and convey these <span class="morehoverlink" id="impression">impressions</span> to the brain.</p>'
 }
 
 var furtherdefinitions = {
-	observation: '<p>Observation is one method for collecting research data. It involves watching a participant and recording relevant behavior for later analysis. One example of a study using the observational method would be when a researcher wants to study how children manage sharing of toys. He could observe a group of children playing in the classroom, and record what things they say or do that determine who gets to play with a coveted toy.</p>'
+	observation: '<p>Observation is an activity of a living being, such as a human, which involves paying close attention to a subject or situation in order to receive knowledge of the subject, environment or world through the senses. Observation can also refer to a method of research or data collection.</p>',
+	experience: '<p>Human experience is the ultimate source and justification for all knowledge. Experience itself has accumulated in human memory and culture, gradually producing the methods of intelligence called "reason" and "science."</p>',
+	interpretation: '<p>An act of interpreting or explaining what is obscure - a translation, version or construction. This is usually judged in relation to the current body of knowledge.</p>',
+	participation: '<p>The act or state of sharing in common with others. Meaningful participation requires that individuals are entitled to collaborate in decisions that directly affect them.</p>',
+	impression: '<p>An idea, feeling, or opinion based on a subject in which some confidence is placed, these are often formed without conscious thought or on the basis of little evidence. This effect is produced in the mind by a stimulus and/or sensation.</p>'
 }
 
 var hov = 0;
