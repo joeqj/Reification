@@ -541,13 +541,9 @@ function render() {
 
 // Off grid intro page amends
 var definitions = {
-	// https://www.thirteen.org/edonline/concept2class/constructivism/index.html
-	constructive: '<p>Constructivism as a paradigm or worldview posits that learning is an active, constructive process based on <span class="morehoverlink" id="observation">observation.</span> The learner is an information constructor. People actively construct or create their own subjective representations of objective reality.</p>',
-	// https://en.wikipedia.org/wiki/Perception
+	constructive: '<p>Constructivism as a paradigm or worldview posits that learning is an active, constructive process based on <span class="morehoverlink" id="observation">observation.</span>  The learner is an information constructor. People actively construct or create their own subjective representations of objective reality.</p>',
 	perception: '<p>The process by which the nature and meaning of sensory stimuli are recognized and <span class="morehoverlink" id="interpretation">interpreted.</span></p>',
-	// https://en.wikipedia.org/wiki/Experience
 	experience: '<p>The wisdom derived from the changes and trials of life, this is typically produced by an event - whether witnessed or <span class="morehoverlink" id="participation">participated</span> in. A person with considerable experience in a specific field can gain reputation or perception to be an expert.</p>',
-	// https://www.alleydog.com/glossary/definition.php?term=Sensory+Information
 	sensory: '<p>Processes and structures within an organism that receive stimuli from the environment and convey these <span class="morehoverlink" id="impression">impressions</span> to the brain.</p>'
 }
 
