@@ -28,7 +28,7 @@ body {
 div {
 	z-index: 10;
 	color: #fff;
-	font-family: monospace;
+	font-family: 'Space Mono', monospace;
 	text-align: center;
 	margin: 10px;
 	width: 100%;
@@ -38,10 +38,10 @@ label, input {
 }
 p {
 	font-size: 1rem;
-	font-family: monospace;
+	font-family: 'Space Mono', monospace;
 }
 h1 {
-	font-family: monospace;
+	font-family: 'Space Mono', monospace;
 }
 #clock {
 	position: absolute;
@@ -63,7 +63,7 @@ h1 {
 #album {
 	position: absolute;
 	bottom: 5px; right: 0;
-	width: 200px;
+	width: 300px;
 	color: #fff;
 }
 #album a {
@@ -99,7 +99,7 @@ h1 {
 	color: #eee;
 }
 .intro .text p {
-	color: #b3b3b3;
+	color: #fff;
 }
 .intro .text .second {
 	margin: 20px 0 10px 0;
@@ -149,6 +149,7 @@ h1 {
 	margin: 0;
 	font-size: 2.4rem;
 	text-transform: uppercase;
+  font-weight: 500;
 }
 .intro .topbar .column:nth-child(1) {
 	text-align: left;
