@@ -2,7 +2,7 @@
 
 A web based interactive project three.js
 
-## Documentation
+## Development
 
 This project was my first initial plunge into WebGL and advanced Javascript as a whole. I really jumped in the deep end with this project and the end result was quite basic as it was built from modifying examples on the three.js website.
 
